@@ -1,0 +1,58 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Booking {
+  id            String        @id @default(uuid())
+  checkIn       DateTime
+  checkOut      DateTime
+  guestName     String
+  guestEmail    String
+  guestPhone    String
+  guestCount    Int           @default(2)
+  totalAmount   Float
+  status        String        // PENDING, CONFIRMED, CANCELLED
+  paymentId     String?       // Razorpay payment ID
+  orderId       String?       // Razorpay order ID
+  platform      String        // DIRECT, AIRBNB, BOOKING_COM
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+  blockedDates  BlockedDate[]
+}
+
+model BlockedDate {
+  id        String   @id @default(uuid())
+  date      DateTime @unique
+  reason    String   // MAINTENANCE, BOOKING
+  bookingId String?
+  booking   Booking? @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+}
+
+model ICalSync {
+  id           String   @id @default(uuid())
+  platformName String   // e.g., "Airbnb", "Booking.com"
+  feedUrl      String   // URL to fetch external .ics from
+  createdAt    DateTime @default(now())
+  lastSyncedAt DateTime @default(now())
+}
+
+model AdminUser {
+  id           String   @id @default(uuid())
+  username     String   @unique
+  passwordHash String
+  createdAt    DateTime @default(now())
+}
+
+model Setting {
+  id    String @id @default(uuid())
+  key   String @unique
+  value String
+}
