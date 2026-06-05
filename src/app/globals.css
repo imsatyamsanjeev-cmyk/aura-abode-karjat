@@ -22,15 +22,8 @@
 }
 
 :root {
-  --background: #faf7f2; /* Muted warm ivory cream background */
-  --foreground: #1c1c1c; /* Soft charcoal black for rich readability */
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0b0b0b;
-    --foreground: #faf7f2;
-  }
+  --background: #0b0b0b; /* Deep luxury dark background */
+  --foreground: #faf7f2; /* Muted warm ivory cream text */
 }
 
 body {

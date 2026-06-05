@@ -13,7 +13,7 @@ export default function PropertyDetails() {
 
   const images = [
     {
-      src: 'https://images.unsplash.com/photo-1582719508461-905c673771fd?q=80&w=800',
+      src: '/images/bedroom/bedroom1.jpeg',
       alt: 'Luxury King Bed Studio',
       caption: 'Plush bedding with premium linens, styled headboard, and warm lighting setup.'
     },
@@ -28,17 +28,17 @@ export default function PropertyDetails() {
       caption: 'Enclosed private lawn with seating, plants, and ambient nighttime lighting.'
     },
     {
-      src: 'https://images.unsplash.com/photo-1505691938895-1758d7feb511?q=80&w=800',
+      src: '/images/living-room/living1.jpeg',
       alt: 'Modern Seating Area',
       caption: 'Elegant lounge chair and coffee table inside the air-conditioned studio room.'
     },
     {
-      src: 'https://images.unsplash.com/photo-1556911220-e15b29be8c8f?q=80&w=800',
+      src: '/images/kitchen/kitchen1.jpeg',
       alt: 'Fully Equipped Kitchenette',
       caption: 'Equipped with induction cooktop, microwave, refrigerator, kettle, and fine crockery.'
     },
     {
-      src: 'https://images.unsplash.com/photo-1484154218962-a197022b5858?q=80&w=800',
+      src: '/images/washroom/washroom1.jpeg',
       alt: 'Luxury Bathroom',
       caption: 'Modern bathroom with glass shower cubicle, hot water, and high-end toiletries.'
     }
@@ -105,7 +105,7 @@ export default function PropertyDetails() {
       <section className="relative h-[40vh] flex items-center justify-center overflow-hidden border-b border-gold-900/10">
         <div className="absolute inset-0 bg-black/70 z-10" />
         <img
-          src="https://images.unsplash.com/photo-1540555700478-4be289fbecef?q=80&w=1200"
+          src="/images/bedroom/bedroom2.jpeg"
           alt="Aura Abode Banner"
           className="absolute inset-0 w-full h-full object-cover object-center"
         />
@@ -177,7 +177,7 @@ export default function PropertyDetails() {
             {/* Mock video player representation */}
             <div className="absolute inset-0 bg-black/40 z-10 group-hover:bg-black/50 transition-colors" />
             <img
-              src="https://images.unsplash.com/photo-1507089947368-19c1da9775ae?q=80&w=600"
+              src="/images/living-room/living2.jpeg"
               alt="Garden Jacuzzi Video Thumbnail"
               className="absolute inset-0 w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-500"
             />

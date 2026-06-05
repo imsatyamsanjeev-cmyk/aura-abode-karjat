@@ -140,7 +140,7 @@ export default function Home() {
               </div>
               <div className="h-80 overflow-hidden border border-zinc-900">
                 <img
-                  src="https://images.unsplash.com/photo-1582719508461-905c673771fd?q=80&w=600"
+                  src="/images/bedroom/bedroom1.jpeg"
                   alt="Studio Bedroom"
                   className="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
                 />
@@ -156,7 +156,7 @@ export default function Home() {
               </div>
               <div className="h-64 overflow-hidden border border-zinc-900">
                 <img
-                  src="https://images.unsplash.com/photo-1505691938895-1758d7feb511?q=80&w=600"
+                  src="/images/living-room/living1.jpeg"
                   alt="Chic Interiors"
                   className="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
                 />

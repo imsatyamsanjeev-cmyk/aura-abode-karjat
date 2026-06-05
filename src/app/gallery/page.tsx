@@ -11,46 +11,70 @@ export default function GalleryPage() {
 
   const galleryItems = [
     {
-      src: 'https://images.unsplash.com/photo-1582719508461-905c673771fd?q=80&w=800',
-      alt: 'Luxury Studio Room',
+      src: '/images/bedroom/bedroom1.jpeg',
+      alt: 'Luxury Studio Suite',
       category: 'interior',
-      caption: 'The main open-plan room featuring warm architectural layout, premium linens, and accent decor.'
+      caption: 'The main open-plan bedroom featuring modern design, premium linens, and warm ambient lighting.'
+    },
+    {
+      src: '/images/living-room/living1.jpeg',
+      alt: 'Chic Living Lounge',
+      category: 'interior',
+      caption: 'Elegant living space with plush sofa seating, modern decor, and direct garden access.'
+    },
+    {
+      src: '/images/kitchen/kitchen1.jpeg',
+      alt: 'Equipped Kitchenette',
+      category: 'interior',
+      caption: 'Equipped kitchenette with induction stove, refrigerator, microwave, and hot kettle.'
+    },
+    {
+      src: '/images/washroom/washroom1.jpeg',
+      alt: 'Premium Bathroom',
+      category: 'interior',
+      caption: 'Sleek washroom layout featuring premium marble fitments and glass divider.'
     },
     {
       src: 'https://images.unsplash.com/photo-1540555700478-4be289fbecef?q=80&w=800',
-      alt: 'Outdoor Jacuzzi',
+      alt: 'Heated Private Jacuzzi',
       category: 'outdoors',
-      caption: 'Our signature outdoor heated Jacuzzi with jets, located in a private deck corner of the lawn.'
+      caption: 'Spacious outdoor heated jacuzzi under a shade canopy in your private garden corner.'
     },
     {
       src: 'https://images.unsplash.com/photo-1507089947368-19c1da9775ae?q=80&w=800',
-      alt: 'Lush Garden Lawn',
+      alt: 'Enclosed Garden Lawn',
       category: 'outdoors',
-      caption: 'Private lawn space surrounded by high boundary walls and tall hedges for absolute privacy.'
+      caption: 'Lush private garden lawn surrounded by security hedges, perfect for morning walks.'
     },
     {
-      src: 'https://images.unsplash.com/photo-1505691938895-1758d7feb511?q=80&w=800',
-      alt: 'Plush Bedding Detail',
+      src: '/images/living-room/living2.jpeg',
+      alt: 'Lounge Seating View',
+      category: 'interior',
+      caption: 'Comfortable sofa seating looking out directly to the scenic private lawn.'
+    },
+    {
+      src: '/images/living-room/living3.jpeg',
+      alt: 'Warm Ambient Details',
+      category: 'interior',
+      caption: 'Soft warm spotlighting highlights the wood textures and premium fitments.'
+    },
+    {
+      src: '/images/bedroom/bedroom2.jpeg',
+      alt: 'Plush Bedding Details',
       category: 'interior',
       caption: 'Close-up of our high-quality mattresses and double cushions for deep comfort.'
     },
     {
-      src: 'https://images.unsplash.com/photo-1556911220-e15b29be8c8f?q=80&w=800',
-      alt: 'Modern Kitchenette',
+      src: '/images/bedroom/bedroom3.jpeg',
+      alt: 'Studio Closets & Wardrobes',
       category: 'interior',
-      caption: 'Fully equipped kitchenette setup with microwave, induction cooktop, kettle, and utensils.'
+      caption: 'Premium cabinet wood works and custom closet wardrobes inside the studio suite.'
     },
     {
-      src: 'https://images.unsplash.com/photo-1484154218962-a197022b5858?q=80&w=800',
-      alt: 'Luxury Bathroom Details',
+      src: '/images/washroom/washroom2.jpeg',
+      alt: 'Modern Bathroom Vanity',
       category: 'interior',
-      caption: 'Chic modern bathroom fitting with sliding glass partition and fine bathroom supplies.'
-    },
-    {
-      src: 'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?q=80&w=800',
-      alt: 'Daytime Garden Seating',
-      category: 'outdoors',
-      caption: 'Sit and relax under the sun in our garden sofa setup, perfect for morning coffee.'
+      caption: 'Sleek dark marble vanity space with top-tier modern sanitary details.'
     },
     {
       src: 'https://images.unsplash.com/photo-1544816155-12df9643f363?q=80&w=800',
