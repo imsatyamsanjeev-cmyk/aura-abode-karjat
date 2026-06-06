@@ -87,14 +87,8 @@ function getSeedFeeds(): ClientFeed[] {
   return [
     {
       id: 'feed-airbnb',
-      platformName: 'Airbnb Export Link',
-      feedUrl: 'https://www.airbnb.com/calendar/ical/12345678.ics',
-      lastSyncedAt: new Date().toISOString(),
-    },
-    {
-      id: 'feed-booking',
-      platformName: 'Booking.com Sync',
-      feedUrl: 'https://ical.booking.com/v1/sync?id=abc-123',
+      platformName: 'Airbnb',
+      feedUrl: 'https://www.airbnb.com/calendar/ical/1518215494994186050.ics?t=984ebdc9ec6e499f8f41737f24d2e4ae&locale=en',
       lastSyncedAt: new Date().toISOString(),
     }
   ];
