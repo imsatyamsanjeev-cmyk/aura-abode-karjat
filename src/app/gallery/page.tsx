@@ -8,6 +8,7 @@ export default function GalleryPage() {
   const [filter, setFilter] = useState('all');
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const [lightboxIndex, setLightboxIndex] = useState(0);
+  const [videoOpen, setVideoOpen] = useState(false);
 
   const galleryItems = [
     {
@@ -202,7 +203,7 @@ export default function GalleryPage() {
           </p>
           <div className="pt-2">
             <button
-              onClick={() => alert('Tour video will open here.')}
+              onClick={() => setVideoOpen(true)}
               className="px-8 py-3 bg-gold-400 hover:bg-gold-500 text-black text-xs uppercase tracking-widest font-bold transition-colors rounded-none shadow-md inline-flex items-center gap-2 cursor-pointer"
             >
               Play Video Tour
@@ -220,6 +221,29 @@ export default function GalleryPage() {
           onPrev={() => setLightboxIndex((lightboxIndex - 1 + galleryItems.length) % galleryItems.length)}
           onNext={() => setLightboxIndex((lightboxIndex + 1) % galleryItems.length)}
         />
+      )}
+
+      {/* Video Overlay Modal */}
+      {videoOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/95 backdrop-blur-md p-4 animate-fade-in">
+          <div className="relative w-full max-w-4xl border border-gold-400/20 bg-zinc-950 shadow-2xl overflow-hidden">
+            {/* Close Button */}
+            <button
+              onClick={() => setVideoOpen(false)}
+              className="absolute top-4 right-4 z-10 bg-black/60 hover:bg-black text-white hover:text-gold-400 border border-zinc-900 hover:border-zinc-800 p-2 text-xs uppercase tracking-widest font-semibold transition-all cursor-pointer"
+            >
+              ✕ Close
+            </button>
+            <div className="aspect-video w-full">
+              <video 
+                src="/video/aura-abode-tour.mp4" 
+                controls 
+                autoPlay 
+                className="w-full h-full object-contain"
+              ></video>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );

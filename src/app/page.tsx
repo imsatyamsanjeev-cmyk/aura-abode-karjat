@@ -347,7 +347,7 @@ export default function Home() {
               </ul>
               <div className="pt-4">
                 <a
-                  href="https://maps.google.com"
+                  href="https://maps.app.goo.gl/bXMgGruuRGf7prHx5"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="inline-flex items-center px-8 py-3.5 border border-gold-400 text-gold-400 hover:bg-gold-400 hover:text-black text-xs uppercase tracking-widest font-semibold transition-all duration-300 rounded-none shadow-lg"
@@ -360,7 +360,7 @@ export default function Home() {
             {/* Google Map Embed */}
             <div className="lg:col-span-7 h-96 w-full border border-gold-400/10 overflow-hidden relative bg-zinc-900 shadow-2xl">
               <iframe
-                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d15099.988019914488!2d73.31346745!3d18.8872294!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3be7fb6a1da50937%3A0x7d6a596041a1290a!2sKarjat%2C%20Maharashtra!5e0!3m2!1sen!2sin!4v1700000000000!5m2!1sen!2sin"
+                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3774.8015099307736!2d73.33230987582236!3d18.89590885759714!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3be7f7d8e5cbce03%3A0xd4f63e686489ae56!2sAura+Abode!5e0!3m2!1sen!2sin!4v1717670000000!5m2!1sen!2sin"
                 width="100%"
                 height="100%"
                 style={{ border: 0, filter: 'invert(90%) hue-rotate(180deg) grayscale(100%) contrast(90%)' }}

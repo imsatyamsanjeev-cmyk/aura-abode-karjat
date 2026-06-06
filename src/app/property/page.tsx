@@ -181,24 +181,16 @@ export default function PropertyDetails() {
           <h3 className="font-serif text-lg text-white font-medium tracking-wide">
             Cinematic Preview
           </h3>
-          <div className="relative aspect-video border border-gold-400/10 group overflow-hidden bg-zinc-900 flex items-center justify-center shadow-xl">
-            {/* Mock video player representation */}
-            <div className="absolute inset-0 bg-black/45 z-10 group-hover:bg-black/55 transition-colors" />
-            <img
-              src="/images/living-room/living2.jpeg"
-              alt="Garden Jacuzzi Video Thumbnail"
-              className="absolute inset-0 w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-700"
-            />
-            {/* Play Button */}
-            <button
-              onClick={() => alert('Cinematic walkthrough video will open here.')}
-              className="relative z-20 w-16 h-16 bg-gold-400 hover:bg-gold-500 text-black rounded-full flex items-center justify-center transition-all duration-300 transform hover:scale-110 shadow-2xl cursor-pointer"
-            >
-              <Play className="w-5 h-5 fill-black ml-1" />
-            </button>
+          <div className="relative aspect-video border border-gold-400/10 bg-zinc-950 shadow-2xl overflow-hidden flex items-center justify-center">
+            <video 
+              src="/video/aura-abode-tour.mp4" 
+              poster="/images/living-room/living2.jpeg"
+              controls 
+              className="w-full h-full object-cover"
+            ></video>
           </div>
-          <p className="text-zinc-500 text-xs font-light text-center leading-relaxed">
-            Take a 1-minute visual walkthrough of the luxury studio, private garden, and jacuzzi setup.
+          <p className="text-zinc-500 text-[10px] font-light text-center leading-relaxed tracking-wider uppercase">
+            Aura Abode Karjat Video Walkthrough
           </p>
         </div>
       </section>
