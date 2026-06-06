@@ -158,20 +158,20 @@ export default function GalleryPage() {
           ))}
         </div>
 
-        {/* Grid display */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 pt-6">
+        {/* Masonry Columns display */}
+        <div className="columns-1 sm:columns-2 lg:columns-3 gap-6 pt-6 [column-fill:_balance]">
           {filteredItems.map((item, idx) => (
             <div
               key={idx}
               onClick={() => handleOpenLightbox(idx)}
-              className="group aspect-4/3 bg-zinc-950 border border-zinc-900 overflow-hidden relative cursor-pointer shadow-md hover:shadow-gold-900/10 transition-shadow"
+              className="break-inside-avoid mb-6 bg-zinc-950 border border-zinc-900 overflow-hidden relative cursor-pointer shadow-md hover:shadow-gold-900/10 transition-shadow group"
             >
               <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/10 to-transparent opacity-60 group-hover:opacity-90 transition-opacity z-10" />
               
               <img
                 src={item.src}
                 alt={item.alt}
-                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                className="w-full h-auto object-cover group-hover:scale-105 transition-transform duration-700"
               />
 
               {/* Title & Zoom Info overlay */}
