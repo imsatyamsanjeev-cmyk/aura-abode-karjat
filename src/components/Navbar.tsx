@@ -123,7 +123,8 @@ export default function Navbar() {
 
       {/* Mobile Drawer menu */}
       <div
-        className={`md:hidden fixed inset-y-0 right-0 w-72 bg-zinc-950 border-l border-gold-400/10 z-50 transform transition-transform duration-500 ease-in-out ${
+        style={{ backgroundColor: '#0b0b0b' }}
+        className={`md:hidden fixed inset-y-0 right-0 w-72 border-l border-gold-400/10 z-50 transform transition-transform duration-500 ease-in-out ${
           isOpen ? 'translate-x-0' : 'translate-x-full'
         }`}
       >

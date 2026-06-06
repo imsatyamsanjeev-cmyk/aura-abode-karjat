@@ -527,7 +527,7 @@ function CheckoutContent() {
                 className="w-4 h-4 bg-zinc-900 border-zinc-800 rounded-none text-gold-400 focus:ring-0 cursor-pointer mt-1"
               />
               <label htmlFor="terms" className="ml-3 text-xs text-zinc-500 font-light leading-relaxed cursor-pointer select-none">
-                I accept the <a href="/terms" target="_blank" className="text-gold-400 hover:underline">Terms & Conditions</a>, <a href="/cancellation" target="_blank" className="text-gold-400 hover:underline">Cancellation Policy</a>, and agree to follow all house safety guidelines for the Jacuzzi.
+                I accept the <a href="/terms" target="_blank" className="text-gold-400 hover:underline">Terms & Conditions</a>, <a href="/cancellation" target="_blank" className="text-gold-400 hover:underline">Cancellation Policy</a>, <a href="/privacy" target="_blank" className="text-gold-400 hover:underline">Privacy & Data Policy</a>, and agree to follow all house safety guidelines for the Jacuzzi.
               </label>
             </div>
 
