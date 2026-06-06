@@ -148,6 +148,14 @@ export default function Home() {
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
                 />
               </div>
+              <div className="h-80 overflow-hidden border border-gold-400/10 group relative">
+                <div className="absolute inset-0 bg-black/10 group-hover:bg-transparent transition-colors duration-300 z-10" />
+                <img
+                  src="/images/living-room/living4.jpeg"
+                  alt="Modern Studio Seating"
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                />
+              </div>
             </div>
             <div className="space-y-6 pt-16">
               <div className="h-96 overflow-hidden border border-gold-400/10 group relative">
@@ -163,6 +171,14 @@ export default function Home() {
                 <img
                   src="/images/living-room/living1.jpeg"
                   alt="Chic Studio Interior Lounge"
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                />
+              </div>
+              <div className="h-80 overflow-hidden border border-gold-400/10 group relative">
+                <div className="absolute inset-0 bg-black/10 group-hover:bg-transparent transition-colors duration-300 z-10" />
+                <img
+                  src="/images/garden/garden3.jpeg"
+                  alt="Lush Abode Landscaping"
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
                 />
               </div>
