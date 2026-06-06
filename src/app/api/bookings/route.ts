@@ -90,36 +90,51 @@ export async function POST(request: Request) {
       },
     });
 
-    // 5. Create Razorpay order
+    // 5. Create Razorpay order (or use mock order in test/preview mode)
     // Razorpay amount is in paise (1 INR = 100 paise)
     const amountInPaise = Math.round(pricing.total * 100);
     
     let razorpayOrder = null;
-    try {
-      razorpayOrder = await razorpay.orders.create({
-        amount: amountInPaise,
-        currency: 'INR',
-        receipt: booking.id,
-        notes: {
-          guestName,
-          guestEmail,
-          bookingId: booking.id,
-        },
-      });
+    const isMockMode = !process.env.RAZORPAY_KEY_ID || process.env.RAZORPAY_KEY_ID === 'rzp_test_placeholder_key';
 
-      // Update the booking with orderId
+    if (isMockMode) {
+      const mockOrderId = `order_mock_${Math.random().toString(36).substring(2, 11).toUpperCase()}`;
       await prisma.booking.update({
         where: { id: booking.id },
-        data: { orderId: razorpayOrder.id },
+        data: { orderId: mockOrderId },
       });
-    } catch (rzpErr) {
-      console.error('Razorpay Order creation failed:', rzpErr);
-      // We still keep the pending booking, client can retry or admin can manage.
-      // But return order creation error to client.
-      return NextResponse.json({
-        success: false,
-        error: 'Payment gateway order creation failed. Please try again.',
-      }, { status: 500 });
+      razorpayOrder = {
+        id: mockOrderId,
+        amount: amountInPaise,
+        currency: 'INR',
+      };
+    } else {
+      try {
+        razorpayOrder = await razorpay.orders.create({
+          amount: amountInPaise,
+          currency: 'INR',
+          receipt: booking.id,
+          notes: {
+            guestName,
+            guestEmail,
+            bookingId: booking.id,
+          },
+        });
+
+        // Update the booking with orderId
+        await prisma.booking.update({
+          where: { id: booking.id },
+          data: { orderId: razorpayOrder.id },
+        });
+      } catch (rzpErr: any) {
+        console.error('Razorpay Order creation failed:', rzpErr);
+        // We still keep the pending booking, client can retry or admin can manage.
+        // But return order creation error to client.
+        return NextResponse.json({
+          success: false,
+          error: 'Payment gateway order creation failed. Please try again.',
+        }, { status: 500 });
+      }
     }
 
     return NextResponse.json({
@@ -130,6 +145,7 @@ export async function POST(request: Request) {
         amount: razorpayOrder.amount,
         currency: razorpayOrder.currency,
       },
+      isMockMode,
     });
   } catch (error) {
     console.error('Error creating pending booking:', error);

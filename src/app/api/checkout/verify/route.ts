@@ -15,8 +15,9 @@ export async function POST(request: Request) {
       return NextResponse.json({ success: false, error: 'Missing payment verification details.' }, { status: 400 });
     }
 
-    // 1. Verify Razorpay Signature
-    const isValid = verifyRazorpaySignature(razorpay_order_id, razorpay_payment_id, razorpay_signature);
+    // 1. Verify Razorpay Signature (allow bypass if it is a mock order generated for testing)
+    const isMockOrder = razorpay_order_id.startsWith('order_mock_');
+    const isValid = isMockOrder ? true : verifyRazorpaySignature(razorpay_order_id, razorpay_payment_id, razorpay_signature);
     
     if (!isValid) {
       return NextResponse.json({ success: false, error: 'Invalid payment signature. Transaction failed.' }, { status: 400 });

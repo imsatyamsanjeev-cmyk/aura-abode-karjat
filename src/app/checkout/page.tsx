@@ -37,6 +37,7 @@ function CheckoutContent() {
   const [simulatedCardExpiry, setSimulatedCardExpiry] = useState('');
   const [simulatedCardCvv, setSimulatedCardCvv] = useState('');
   const [paymentError, setPaymentError] = useState('');
+  const [activeBooking, setActiveBooking] = useState<any>(null);
 
   // Load Razorpay SDK Script dynamically
   useEffect(() => {
@@ -92,7 +93,14 @@ function CheckoutContent() {
         throw new Error(data.error || 'Failed to initialize booking.');
       }
 
-      const { booking, razorpayOrder } = data;
+      const { booking, razorpayOrder, isMockMode } = data;
+      setActiveBooking(booking);
+
+      if (isMockMode) {
+        setShowSimulatedGateway(true);
+        setLoading(false);
+        return;
+      }
 
       // 2. Open Razorpay Overlay
       const options = {
@@ -167,7 +175,7 @@ function CheckoutContent() {
     }
   };
 
-  const handleSimulatedPaymentSubmit = (e: React.FormEvent) => {
+  const handleSimulatedPaymentSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!simulatedCardName || !simulatedCardNumber || !simulatedCardExpiry || !simulatedCardCvv) {
       setPaymentError('Please fill in all card details.');
@@ -177,31 +185,48 @@ function CheckoutContent() {
     setLoading(true);
     setPaymentError('');
     
-    // Simulate payment delay
-    setTimeout(() => {
-      const mockPaymentId = 'pay_' + Math.random().toString(36).substring(2, 11).toUpperCase();
-      const mockOrderId = 'order_' + Math.random().toString(36).substring(2, 11).toUpperCase();
-      const mockBookingId = 'booking_' + Math.random().toString(36).substring(2, 11).toUpperCase();
+    try {
+      const mockPaymentId = 'pay_mock_' + Math.random().toString(36).substring(2, 11).toUpperCase();
+      const mockSignature = 'sig_mock_' + Math.random().toString(36).substring(2, 15);
 
-      const bookingObj = addLocalBooking({
-        id: mockBookingId,
-        checkIn: checkInStr,
-        checkOut: checkOutStr,
-        guestName,
-        guestEmail,
-        guestPhone,
-        guestCount: guestsNum,
-        totalAmount: pricing.total,
-        status: 'CONFIRMED',
-        platform: 'DIRECT',
-        paymentId: mockPaymentId,
-        orderId: mockOrderId,
+      // Verify mock order on the backend to register the booking, block calendar dates, and trigger notifications
+      const verifyRes = await fetch('/api/checkout/verify', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          razorpay_order_id: activeBooking ? activeBooking.orderId : ('order_mock_' + Math.random().toString(36).substring(2, 11).toUpperCase()),
+          razorpay_payment_id: mockPaymentId,
+          razorpay_signature: mockSignature,
+          booking_id: activeBooking ? activeBooking.id : ('booking_mock_' + Math.random().toString(36).substring(2, 11).toUpperCase()),
+        }),
       });
 
-      setConfirmedBooking(bookingObj);
-      setShowSimulatedGateway(false);
+      const verifyData = await verifyRes.json();
+      if (verifyRes.ok && verifyData.success) {
+        const localSaved = addLocalBooking({
+          id: activeBooking ? activeBooking.id : 'mock_id',
+          checkIn: checkInStr,
+          checkOut: checkOutStr,
+          guestName,
+          guestEmail,
+          guestPhone,
+          guestCount: guestsNum,
+          totalAmount: pricing.total,
+          status: 'CONFIRMED',
+          platform: 'DIRECT',
+          paymentId: mockPaymentId,
+          orderId: activeBooking ? activeBooking.orderId : 'mock_order_id',
+        });
+        setConfirmedBooking(localSaved);
+        setShowSimulatedGateway(false);
+      } else {
+        setPaymentError(verifyData.error || 'Payment verification failed.');
+      }
+    } catch (err: any) {
+      setPaymentError('An error occurred during payment verification.');
+    } finally {
       setLoading(false);
-    }, 2000);
+    }
   };
 
   const handleFormSubmit = (e: React.FormEvent) => {

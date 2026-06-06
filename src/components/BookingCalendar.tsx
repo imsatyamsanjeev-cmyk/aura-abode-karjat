@@ -188,7 +188,7 @@ export default function BookingCalendar() {
   return (
     <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 mt-8">
       {/* Calendar Grid */}
-      <div className="lg:col-span-8 bg-zinc-950 p-6 md:p-8 border border-gold-900/30 animate-fade-in">
+      <div className="lg:col-span-8 bg-zinc-950 p-6 md:p-8 border border-gold-400/10 shadow-2xl animate-fade-in">
         <div className="flex justify-between items-center mb-8">
           <h3 className="font-serif text-xl md:text-2xl text-white tracking-wide">
             {monthNames[month]} {year}
@@ -284,7 +284,7 @@ export default function BookingCalendar() {
       </div>
 
       {/* Booking sidebar / Price details */}
-      <div className="lg:col-span-4 bg-zinc-950 border border-gold-900/30 p-6 md:p-8 flex flex-col justify-between animate-fade-in">
+      <div className="lg:col-span-4 bg-zinc-950 border border-gold-400/10 shadow-2xl p-6 md:p-8 flex flex-col justify-between animate-fade-in">
         <div>
           <h4 className="font-serif text-lg text-gold-400 uppercase tracking-widest mb-6 pb-2 border-b border-zinc-900">
             Reservation Detail

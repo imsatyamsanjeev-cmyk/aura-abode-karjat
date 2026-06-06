@@ -35,13 +35,13 @@ export default function GalleryPage() {
       caption: 'Sleek washroom layout featuring premium marble fitments and glass divider.'
     },
     {
-      src: 'https://images.unsplash.com/photo-1540555700478-4be289fbecef?q=80&w=800',
+      src: '/images/jacuzzi/jacuzzi1.jpeg',
       alt: 'Heated Private Jacuzzi',
-      category: 'outdoors',
+      category: 'wellness',
       caption: 'Spacious outdoor heated jacuzzi under a shade canopy in your private garden corner.'
     },
     {
-      src: 'https://images.unsplash.com/photo-1507089947368-19c1da9775ae?q=80&w=800',
+      src: '/images/garden/garden1.jpeg',
       alt: 'Enclosed Garden Lawn',
       category: 'outdoors',
       caption: 'Lush private garden lawn surrounded by security hedges, perfect for morning walks.'
@@ -77,16 +77,28 @@ export default function GalleryPage() {
       caption: 'Sleek dark marble vanity space with top-tier modern sanitary details.'
     },
     {
-      src: 'https://images.unsplash.com/photo-1544816155-12df9643f363?q=80&w=800',
+      src: '/images/garden/garden2.jpeg',
       alt: 'Evening Garden Ambiance',
       category: 'outdoors',
       caption: 'Beautiful twilight lighting setups that transform the garden space into a magical oasis.'
     },
     {
-      src: 'https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?q=80&w=800',
+      src: '/images/valleys/valley1.jpeg',
       alt: 'Scenic Valley Surroundings',
       category: 'surroundings',
       caption: 'Lush green peaks and foggy valleys of Karjat, located just minutes outside the property.'
+    },
+    {
+      src: '/images/backyard/backyard1.jpeg',
+      alt: 'Private Backyard Deck',
+      category: 'outdoors',
+      caption: 'Quiet outdoor backyard seating deck surrounded by dense forest tree tops.'
+    },
+    {
+      src: '/images/backyard/backyard2.jpeg',
+      alt: 'Backyard Pathway',
+      category: 'outdoors',
+      caption: 'Clean stone pathway running along the private garden perimeter.'
     }
   ];
 
@@ -105,7 +117,8 @@ export default function GalleryPage() {
   const categories = [
     { value: 'all', label: 'All Photos' },
     { value: 'interior', label: 'Apartment Interiors' },
-    { value: 'outdoors', label: 'Garden & Jacuzzi' },
+    { value: 'outdoors', label: 'Garden & Backyard' },
+    { value: 'wellness', label: 'Jacuzzi Spa' },
     { value: 'surroundings', label: 'Karjat Valleys' }
   ];
 

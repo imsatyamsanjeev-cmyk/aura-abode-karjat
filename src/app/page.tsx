@@ -55,7 +55,7 @@ export default function Home() {
         <div className="absolute inset-0 z-0">
           <div className="absolute inset-0 bg-black/70 z-10" />
           <img
-            src="https://images.unsplash.com/photo-1582719508461-905c673771fd?q=80&w=1600"
+            src="/images/valleys/valley1.jpeg"
             alt="Aura Abode Karjat Luxury Studio"
             className="w-full h-full object-cover object-center scale-105 animate-[zoom_20s_infinite_alternate]"
           />
@@ -104,61 +104,66 @@ export default function Home() {
       </section>
 
       {/* 2. Core Experience Section */}
-      <section className="py-24 px-4 max-w-7xl mx-auto">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 items-center">
-          <div className="lg:col-span-5 space-y-6">
-            <span className="text-gold-500 text-xs font-sans tracking-[0.3em] uppercase font-semibold block">
+      <section className="py-32 px-4 max-w-7xl mx-auto">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-20 items-center">
+          <div className="lg:col-span-5 space-y-8 animate-fade-in">
+            <span className="text-gold-500 text-xs font-sans tracking-[0.4em] uppercase font-semibold block">
               The Experience
             </span>
-            <h2 className="font-serif text-3xl md:text-5xl text-white font-semibold leading-tight">
-              An Oasis of Seclusion <br />& Uncompromising Luxury
+            <h2 className="font-serif text-3xl md:text-5xl text-white font-medium leading-tight">
+              An Oasis of Seclusion <br />
+              <span className="italic font-light text-zinc-300">and Private</span> Wellness
             </h2>
             <p className="text-zinc-400 text-sm font-light leading-relaxed">
               Aura Abode Karjat redefines the weekend getaway. Designed for discerning travelers seeking tranquility, our signature studio apartment blends contemporary luxury with natural beauty.
             </p>
             <p className="text-zinc-400 text-sm font-light leading-relaxed">
-              Step out onto your private lawn to feel the morning dew, sink into your private heated Jacuzzi to unwind after a day of exploring, or relax inside in an elegantly appointed space built with high-quality decor.
+              Step out onto your private lawn to feel the morning dew, sink into your private heated Jacuzzi to unwind under the stars, or relax inside in an elegantly appointed space built with high-quality decor.
             </p>
             <div className="pt-4">
               <Link
                 href="/property"
-                className="text-xs uppercase tracking-widest text-gold-400 hover:text-gold-500 font-semibold border-b border-gold-400 pb-1 transition-colors"
+                className="text-xs uppercase tracking-[0.2em] text-gold-400 hover:text-gold-500 font-bold border-b border-gold-400 hover:border-gold-500 pb-1.5 transition-colors inline-block"
               >
-                View Apartment Details →
+                Explore Apartment Details →
               </Link>
             </div>
           </div>
 
-          <div className="lg:col-span-7 grid grid-cols-2 gap-4">
-            <div className="space-y-4">
-              <div className="h-64 overflow-hidden border border-zinc-900">
+          <div className="lg:col-span-7 grid grid-cols-2 gap-6">
+            <div className="space-y-6">
+              <div className="h-72 overflow-hidden border border-gold-400/10 group relative">
+                <div className="absolute inset-0 bg-black/10 group-hover:bg-transparent transition-colors duration-300 z-10" />
                 <img
-                  src="https://images.unsplash.com/photo-1540555700478-4be289fbecef?q=80&w=600"
-                  alt="Outdoor Jacuzzi"
-                  className="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
+                  src="/images/jacuzzi/jacuzzi1.jpeg"
+                  alt="Private Heated Jacuzzi"
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
                 />
               </div>
-              <div className="h-80 overflow-hidden border border-zinc-900">
+              <div className="h-96 overflow-hidden border border-gold-400/10 group relative">
+                <div className="absolute inset-0 bg-black/10 group-hover:bg-transparent transition-colors duration-300 z-10" />
                 <img
                   src="/images/bedroom/bedroom1.jpeg"
-                  alt="Studio Bedroom"
-                  className="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
+                  alt="Studio Bedroom Suite"
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
                 />
               </div>
             </div>
-            <div className="space-y-4 pt-12">
-              <div className="h-80 overflow-hidden border border-zinc-900">
+            <div className="space-y-6 pt-16">
+              <div className="h-96 overflow-hidden border border-gold-400/10 group relative">
+                <div className="absolute inset-0 bg-black/10 group-hover:bg-transparent transition-colors duration-300 z-10" />
                 <img
-                  src="https://images.unsplash.com/photo-1507089947368-19c1da9775ae?q=80&w=600"
-                  alt="Private Garden Lawn"
-                  className="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
+                  src="/images/garden/garden1.jpeg"
+                  alt="Private Enclosed Garden Lawn"
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
                 />
               </div>
-              <div className="h-64 overflow-hidden border border-zinc-900">
+              <div className="h-72 overflow-hidden border border-gold-400/10 group relative">
+                <div className="absolute inset-0 bg-black/10 group-hover:bg-transparent transition-colors duration-300 z-10" />
                 <img
                   src="/images/living-room/living1.jpeg"
-                  alt="Chic Interiors"
-                  className="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
+                  alt="Chic Studio Interior Lounge"
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
                 />
               </div>
             </div>
@@ -167,28 +172,29 @@ export default function Home() {
       </section>
 
       {/* 3. Amenities Grid */}
-      <section className="bg-zinc-950 border-y border-gold-900/10 py-24">
+      <section className="bg-zinc-950/60 border-y border-gold-400/10 py-28 backdrop-blur-sm">
         <div className="max-w-7xl mx-auto px-4">
-          <div className="text-center max-w-2xl mx-auto mb-16 space-y-4">
-            <span className="text-gold-500 text-xs font-sans tracking-[0.3em] uppercase font-semibold">
+          <div className="text-center max-w-2xl mx-auto mb-20 space-y-4">
+            <span className="text-gold-500 text-xs font-sans tracking-[0.4em] uppercase font-semibold">
               Curated Indulgences
             </span>
             <h2 className="font-serif text-3xl md:text-5xl text-white font-medium">
               Amenities Designed to Pamper
             </h2>
-            <div className="w-16 h-[1px] bg-gold-400 mx-auto mt-4" />
+            <div className="w-12 h-[1px] bg-gold-400 mx-auto mt-6" />
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
             {highlights.map((item, idx) => (
               <div
                 key={idx}
-                className="bg-zinc-900/20 p-8 border border-zinc-900/60 hover:border-gold-900/30 transition-all duration-300 group"
+                className="bg-zinc-900/10 p-10 border border-zinc-900 hover:border-gold-400/20 shadow-xl hover:shadow-[0_10px_30px_rgba(0,0,0,0.8)] transition-all duration-500 group relative overflow-hidden"
               >
-                <div className="mb-6 transform group-hover:scale-110 transition-transform duration-300 inline-block">
+                <div className="absolute top-0 left-0 w-[1px] h-0 bg-gold-400/40 group-hover:h-full transition-all duration-750" />
+                <div className="mb-8 transform group-hover:scale-110 group-hover:-translate-y-1 transition-all duration-500 inline-block">
                   {item.icon}
                 </div>
-                <h3 className="font-serif text-lg text-white font-medium mb-3 group-hover:text-gold-400 transition-colors">
+                <h3 className="font-serif text-xl text-white font-medium mb-4 group-hover:text-gold-400 transition-colors">
                   {item.title}
                 </h3>
                 <p className="text-zinc-500 text-xs font-light leading-relaxed">
@@ -198,10 +204,10 @@ export default function Home() {
             ))}
           </div>
 
-          <div className="text-center mt-12">
+          <div className="text-center mt-16">
             <Link
               href="/property#amenities"
-              className="text-xs uppercase tracking-widest text-gold-400 font-semibold border-b border-gold-400 pb-1 hover:text-gold-500 hover:border-gold-500 transition-all"
+              className="text-xs uppercase tracking-widest text-gold-400 font-bold border-b border-gold-400 pb-1 hover:text-gold-500 hover:border-gold-500 transition-all inline-block"
             >
               View Full Amenities List
             </Link>
@@ -209,84 +215,127 @@ export default function Home() {
         </div>
       </section>
 
-      {/* 4. Reviews / Testimonial section */}
-      <section className="py-24 px-4 max-w-7xl mx-auto">
-        <div className="text-center max-w-2xl mx-auto mb-16 space-y-4">
-          <span className="text-gold-500 text-xs font-sans tracking-[0.3em] uppercase font-semibold">
-            Guest Diaries
+      {/* 3.5 Local Wonders / Sightseeing Section */}
+      <section className="py-28 px-4 max-w-7xl mx-auto">
+        <div className="text-center max-w-2xl mx-auto mb-20 space-y-4">
+          <span className="text-gold-500 text-xs font-sans tracking-[0.4em] uppercase font-semibold">
+            Explore Karjat
           </span>
           <h2 className="font-serif text-3xl md:text-5xl text-white font-medium">
-            Stories From Our Guests
+            Local Wonders Near Aura Abode
           </h2>
-          <div className="w-16 h-[1px] bg-gold-400 mx-auto mt-4" />
+          <p className="text-zinc-500 text-xs font-light max-w-md mx-auto leading-relaxed">
+            Enhance your stay by visiting some of Maharashtra's most scenic viewpoints and waterfall trails, located just a short drive from the villa.
+          </p>
+          <div className="w-12 h-[1px] bg-gold-400 mx-auto mt-6" />
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {reviews.map((r, idx) => {
-            const initials = r.name.split(' ').map(n => n[0]).join('');
-            return (
-              <div
-                key={idx}
-                className="bg-zinc-950/40 p-8 border border-zinc-900/60 hover:border-gold-400/30 flex flex-col justify-between relative group transition-all duration-500 hover:-translate-y-1 rounded-none shadow-xl hover:shadow-gold-950/10"
-              >
-                {/* Subtle top decorative gold line */}
-                <div className="absolute top-0 left-0 w-0 h-[1px] bg-gold-400 group-hover:w-full transition-all duration-500" />
-                
-                {/* Large decorative quote mark */}
-                <div className="absolute top-6 right-8 text-gold-900/10 group-hover:text-gold-400/5 transition-colors duration-300 pointer-events-none">
-                  <Quote size={56} className="rotate-180" />
-                </div>
+          <div className="bg-zinc-950 border border-zinc-900/60 p-8 space-y-4 hover:border-gold-400/15 transition-all duration-500">
+            <div className="text-gold-400 text-xs uppercase tracking-widest font-semibold block mb-2 font-mono">01 / WATERFALLS</div>
+            <h3 className="font-serif text-xl text-white font-semibold">Bhivpuri Waterfall</h3>
+            <p className="text-zinc-500 text-xs font-light leading-relaxed">
+              Located only 20 minutes away, Bhivpuri is a majestic waterfall hotspot especially active during the monsoons. Perfect for a refreshing dip and short jungle trail walks.
+            </p>
+          </div>
+          <div className="bg-zinc-950 border border-zinc-900/60 p-8 space-y-4 hover:border-gold-400/15 transition-all duration-500">
+            <div className="text-gold-400 text-xs uppercase tracking-widest font-semibold block mb-2 font-mono">02 / TREKKING</div>
+            <h3 className="font-serif text-xl text-white font-semibold">Sondai Fort Trek</h3>
+            <p className="text-zinc-500 text-xs font-light leading-relaxed">
+              A beginner-friendly historical trek offering breathtaking panoramic views of the Morbe Dam reservoir and fog-covered valleys of Karjat. Highly recommended for morning trails.
+            </p>
+          </div>
+          <div className="bg-zinc-950 border border-zinc-900/60 p-8 space-y-4 hover:border-gold-400/15 transition-all duration-500">
+            <div className="text-gold-400 text-xs uppercase tracking-widest font-semibold block mb-2 font-mono">03 / HISTORY</div>
+            <h3 className="font-serif text-xl text-white font-semibold">Kothaligad (Peth) Fort</h3>
+            <p className="text-zinc-500 text-xs font-light leading-relaxed">
+              A historic sentinel fort with a unique funnel-shaped tower carving. Offers sweeping 360-degree views of the Western Ghats mountain ridges and lush seasonal streams.
+            </p>
+          </div>
+        </div>
+      </section>
 
-                <div className="space-y-6 relative z-10">
-                  {/* Stars */}
-                  <div className="flex space-x-1">
-                    {[...Array(r.rating)].map((_, i) => (
-                      <Star key={i} className="w-3.5 h-3.5 text-gold-400 fill-gold-400" />
-                    ))}
+      {/* 4. Reviews / Testimonial section */}
+      <section className="bg-zinc-950/40 border-t border-zinc-900/80 py-28 px-4">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center max-w-2xl mx-auto mb-20 space-y-4">
+            <span className="text-gold-500 text-xs font-sans tracking-[0.4em] uppercase font-semibold">
+              Guest Diaries
+            </span>
+            <h2 className="font-serif text-3xl md:text-5xl text-white font-medium">
+              Stories From Our Guests
+            </h2>
+            <div className="w-12 h-[1px] bg-gold-400 mx-auto mt-6" />
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {reviews.map((r, idx) => {
+              const initials = r.name.split(' ').map(n => n[0]).join('');
+              return (
+                <div
+                  key={idx}
+                  className="bg-zinc-950/80 p-10 border border-zinc-900/60 hover:border-gold-400/30 flex flex-col justify-between relative group transition-all duration-500 hover:-translate-y-1 shadow-2xl"
+                >
+                  {/* Subtle top decorative gold line */}
+                  <div className="absolute top-0 left-0 w-0 h-[1px] bg-gold-400 group-hover:w-full transition-all duration-700" />
+                  
+                  {/* Large decorative quote mark */}
+                  <div className="absolute top-6 right-8 text-gold-900/5 group-hover:text-gold-400/5 transition-colors duration-300 pointer-events-none">
+                    <Quote size={56} className="rotate-180" />
                   </div>
-                  <p className="text-zinc-300 text-sm font-light leading-relaxed italic">
-                    "{r.comment}"
-                  </p>
-                </div>
-                
-                <div className="mt-8 pt-6 border-t border-zinc-900/80 flex justify-between items-center relative z-10">
-                  <div className="flex items-center gap-3">
-                    {/* Guest initials avatar */}
-                    <div className="w-9 h-9 rounded-none border border-zinc-800 bg-zinc-900/60 flex items-center justify-center text-[10px] tracking-wider font-semibold text-gold-400 group-hover:border-gold-400/30 transition-colors duration-500">
-                      {initials}
+
+                  <div className="space-y-6 relative z-10">
+                    {/* Stars */}
+                    <div className="flex space-x-1">
+                      {[...Array(r.rating)].map((_, i) => (
+                        <Star key={i} className="w-3.5 h-3.5 text-gold-400 fill-gold-400" />
+                      ))}
                     </div>
-                    <div>
-                      <h4 className="font-serif text-sm text-white font-medium tracking-wide">{r.name}</h4>
-                      <span className="text-[9px] text-zinc-500 uppercase tracking-widest font-sans font-medium block mt-0.5">
-                        Verified Guest, {r.location}
-                      </span>
+                    <p className="text-zinc-300 text-sm font-light leading-relaxed italic">
+                      "{r.comment}"
+                    </p>
+                  </div>
+                  
+                  <div className="mt-8 pt-6 border-t border-zinc-900/80 flex justify-between items-center relative z-10">
+                    <div className="flex items-center gap-3">
+                      {/* Guest initials avatar */}
+                      <div className="w-9 h-9 rounded-none border border-zinc-800 bg-zinc-900/60 flex items-center justify-center text-[10px] tracking-wider font-semibold text-gold-400 group-hover:border-gold-400/30 transition-colors duration-500">
+                        {initials}
+                      </div>
+                      <div>
+                        <h4 className="font-serif text-sm text-white font-medium tracking-wide">{r.name}</h4>
+                        <span className="text-[9px] text-zinc-500 uppercase tracking-widest font-sans font-medium block mt-0.5">
+                          Verified Guest, {r.location}
+                        </span>
+                      </div>
+                    </div>
+                    <div className="bg-gold-950/20 px-2.5 py-1 text-[8px] text-gold-400 font-bold uppercase tracking-widest border border-gold-900/30">
+                      Stayed
                     </div>
                   </div>
-                  <div className="bg-gold-950/20 px-2.5 py-1 text-[8px] text-gold-400 font-bold uppercase tracking-widest border border-gold-900/30">
-                    Stayed
-                  </div>
                 </div>
-              </div>
-            );
-          })}
+              );
+            })}
+          </div>
         </div>
       </section>
 
       {/* 5. Location and Map Section */}
-      <section className="bg-zinc-950 border-t border-zinc-900 py-24 px-4">
+      <section className="bg-zinc-950 border-t border-zinc-900/60 py-28 px-4">
         <div className="max-w-7xl mx-auto">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
-            <div className="lg:col-span-5 space-y-6">
-              <span className="text-gold-500 text-xs font-sans tracking-[0.3em] uppercase font-semibold">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 items-center">
+            <div className="lg:col-span-5 space-y-8">
+              <span className="text-gold-500 text-xs font-sans tracking-[0.4em] uppercase font-semibold">
                 Find Us
               </span>
               <h2 className="font-serif text-3xl md:text-5xl text-white font-medium">
-                Perfect Location, <br />Easy Accessibility
+                Perfect Location, <br />
+                <span className="italic font-light text-zinc-300">Easy Accessibility</span>
               </h2>
               <p className="text-zinc-400 text-sm font-light leading-relaxed">
                 Aura Abode Karjat is located inside the prestigious Tata Glenwood society in Karjat, Maharashtra. Positioned just 2 hours from Mumbai and Pune, it is easily reachable by car or train.
               </p>
-              <ul className="space-y-4 text-xs font-light text-zinc-500">
+              <ul className="space-y-4 text-xs font-light text-zinc-500 pt-2">
                 <li className="flex items-center gap-3">
                   <MapPin className="w-5 h-5 text-gold-400 flex-shrink-0" />
                   <span>Tata Glenwood, Karjat, Maharashtra 410201</span>
@@ -296,20 +345,20 @@ export default function Home() {
                   <span>24/7 Gated Security & Secure Parking Space</span>
                 </li>
               </ul>
-              <div className="pt-2">
+              <div className="pt-4">
                 <a
                   href="https://maps.google.com"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center px-6 py-3 border border-gold-400 text-gold-400 hover:bg-gold-400 hover:text-black text-xs uppercase tracking-widest font-semibold transition-all duration-300 rounded-none"
+                  className="inline-flex items-center px-8 py-3.5 border border-gold-400 text-gold-400 hover:bg-gold-400 hover:text-black text-xs uppercase tracking-widest font-semibold transition-all duration-300 rounded-none shadow-lg"
                 >
                   Open in Google Maps
                 </a>
               </div>
             </div>
 
-            {/* Google Map Embed placeholder / mockup map */}
-            <div className="lg:col-span-7 h-96 w-full border border-zinc-900 overflow-hidden relative bg-zinc-900">
+            {/* Google Map Embed */}
+            <div className="lg:col-span-7 h-96 w-full border border-gold-400/10 overflow-hidden relative bg-zinc-900 shadow-2xl">
               <iframe
                 src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d15099.988019914488!2d73.31346745!3d18.8872294!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3be7fb6a1da50937%3A0x7d6a596041a1290a!2sKarjat%2C%20Maharashtra!5e0!3m2!1sen!2sin!4v1700000000000!5m2!1sen!2sin"
                 width="100%"
@@ -325,12 +374,12 @@ export default function Home() {
       </section>
 
       {/* 6. Call to Action Book section */}
-      <section className="relative py-32 flex items-center justify-center overflow-hidden">
+      <section className="relative py-40 flex items-center justify-center overflow-hidden">
         {/* Background Image */}
         <div className="absolute inset-0 z-0">
           <div className="absolute inset-0 bg-black/85 z-10" />
           <img
-            src="https://images.unsplash.com/photo-1507089947368-19c1da9775ae?q=80&w=1600"
+            src="/images/garden/garden2.jpeg"
             alt="Aura Abode Garden"
             className="w-full h-full object-cover object-center"
           />
@@ -344,13 +393,13 @@ export default function Home() {
           <h2 className="font-serif text-3xl md:text-6xl font-bold tracking-wide">
             Ready to Begin Your Retreat?
           </h2>
-          <p className="text-zinc-400 text-sm md:text-base font-light max-w-xl mx-auto leading-relaxed">
+          <p className="text-zinc-400 text-xs md:text-sm font-light max-w-xl mx-auto leading-relaxed">
             Reserve your dates directly to lock in the best guaranteed pricing, secure your private garden jacuzzi stay, and get instant booking verification.
           </p>
-          <div className="pt-6">
+          <div className="pt-8">
             <Link
               href="/booking"
-              className="inline-flex items-center justify-center px-10 py-4 bg-gold-400 hover:bg-gold-500 text-black text-xs uppercase tracking-[0.2em] font-bold transition-all duration-300 rounded-none shadow-lg transform hover:-translate-y-0.5"
+              className="inline-flex items-center justify-center px-10 py-4 bg-gold-400 hover:bg-gold-500 text-black text-xs uppercase tracking-[0.2em] font-bold transition-all duration-300 rounded-none shadow-2xl transform hover:-translate-y-0.5"
             >
               Book Your Luxury Stay
             </Link>
