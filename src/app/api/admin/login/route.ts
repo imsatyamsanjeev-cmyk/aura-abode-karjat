@@ -34,13 +34,19 @@ export async function POST(request: Request) {
     let userId = 'fallback-admin-id';
 
     try {
-      // 1. Seed default admin if none exists
-      const adminCount = await prisma.adminUser.count();
-      if (adminCount === 0) {
-        const defaultUser = process.env.ADMIN_USERNAME || 'admin';
-        const defaultPassword = process.env.ADMIN_PASSWORD || 'admin123';
-        const hash = hashPassword(defaultPassword);
-        
+      // 1. Seed or update admin user credentials based on environment variables
+      const defaultUser = process.env.ADMIN_USERNAME || 'admin';
+      const defaultPassword = process.env.ADMIN_PASSWORD || 'admin123';
+      const hash = hashPassword(defaultPassword);
+
+      const existingAdmin = await prisma.adminUser.findUnique({
+        where: { username: defaultUser }
+      });
+
+      if (!existingAdmin) {
+        // If the environment variable username is not in DB, create it.
+        // Clear any old seeded admin users to avoid conflict
+        await prisma.adminUser.deleteMany();
         await prisma.adminUser.create({
           data: {
             username: defaultUser,
@@ -48,6 +54,17 @@ export async function POST(request: Request) {
           },
         });
         console.log(`Seeded default admin user: ${defaultUser}`);
+      } else {
+        // If the admin user exists, verify if the password matches process.env.ADMIN_PASSWORD.
+        // If the environment variable password has changed, update the database hash.
+        const isPasswordMatch = verifyPassword(defaultPassword, existingAdmin.passwordHash);
+        if (!isPasswordMatch) {
+          await prisma.adminUser.update({
+            where: { username: defaultUser },
+            data: { passwordHash: hash }
+          });
+          console.log(`Updated database password for admin user: ${defaultUser}`);
+        }
       }
 
       // 2. Query admin user
