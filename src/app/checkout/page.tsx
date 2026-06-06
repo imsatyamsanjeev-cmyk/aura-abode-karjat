@@ -36,8 +36,12 @@ function CheckoutContent() {
   const [simulatedCardNumber, setSimulatedCardNumber] = useState('');
   const [simulatedCardExpiry, setSimulatedCardExpiry] = useState('');
   const [simulatedCardCvv, setSimulatedCardCvv] = useState('');
+  const [isCardFlipped, setIsCardFlipped] = useState(false);
   const [paymentError, setPaymentError] = useState('');
   const [activeBooking, setActiveBooking] = useState<any>(null);
+
+  // Mobile summary drawer state
+  const [mobileDrawerOpen, setMobileDrawerOpen] = useState(false);
 
   // Load Razorpay SDK Script dynamically
   useEffect(() => {
@@ -247,6 +251,42 @@ function CheckoutContent() {
     alert('Copied to clipboard!');
   };
 
+  // Credit Card formatting helpers
+  const getCardType = (num: string) => {
+    if (!num) return 'SECURE CARD';
+    if (num.startsWith('4')) return 'VISA';
+    const parsed = parseInt(num.substring(0, 2));
+    if (parsed >= 51 && parsed <= 55) return 'MASTERCARD';
+    if (num.startsWith('34') || num.startsWith('37')) return 'AMEX';
+    if (num.startsWith('6011') || num.startsWith('65')) return 'DISCOVER';
+    return 'CREDIT CARD';
+  };
+
+  const formatCardNumberVisual = (num: string) => {
+    const padded = num.padEnd(16, '•');
+    const parts = [];
+    for (let i = 0; i < 16; i += 4) {
+      parts.push(padded.substring(i, i + 4));
+    }
+    return parts.join(' ');
+  };
+
+  const handleCardNumberChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const raw = e.target.value.replace(/\D/g, '');
+    if (raw.length <= 16) {
+      setSimulatedCardNumber(raw);
+    }
+  };
+
+  const handleCardExpiryChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    let val = e.target.value.replace(/\D/g, '');
+    if (val.length > 4) val = val.substring(0, 4);
+    if (val.length > 2) {
+      val = val.substring(0, 2) + '/' + val.substring(2);
+    }
+    setSimulatedCardExpiry(val);
+  };
+
   // SUCCESS CONFIRMATION VIEW
   if (confirmedBooking) {
     return (
@@ -323,10 +363,97 @@ function CheckoutContent() {
 
   // CHECKOUT PAGE FORM VIEW
   return (
-    <div className="max-w-7xl mx-auto px-4 py-12 text-white">
+    <div className="max-w-7xl mx-auto px-4 py-12 text-white pb-24 lg:pb-12">
       <Link href="/booking" className="inline-flex items-center text-xs text-zinc-500 hover:text-gold-400 transition-colors mb-8">
         <ArrowLeft className="w-4 h-4 mr-2" /> Back to Availability
       </Link>
+
+      {/* Mobile Sticky Booking summary strip */}
+      <div className="lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-zinc-950/95 backdrop-blur-xl border-t border-gold-400/20 px-4 py-3 shadow-[0_-10px_30px_rgba(0,0,0,0.85)] flex items-center justify-between">
+        <div className="flex flex-col">
+          <span className="text-[8px] text-zinc-500 uppercase tracking-widest font-semibold">Total Price</span>
+          <div className="flex items-baseline gap-1">
+            <span className="text-gold-400 font-serif text-lg font-bold">
+              ₹{Math.round(pricing.total).toLocaleString('en-IN')}
+            </span>
+            <span className="text-zinc-500 text-[9px] italic">({pricing.nights} {pricing.nights === 1 ? 'night' : 'nights'})</span>
+          </div>
+        </div>
+        
+        <div className="flex items-center gap-2">
+          <button
+            type="button"
+            onClick={() => setMobileDrawerOpen(!mobileDrawerOpen)}
+            className="px-2.5 py-1.5 border border-zinc-800 hover:border-gold-400/40 text-[9px] uppercase tracking-wider font-semibold text-zinc-300 transition-colors"
+          >
+            {mobileDrawerOpen ? 'Hide Info ▴' : 'Summary ▾'}
+          </button>
+          
+          <button
+            type="button"
+            onClick={() => {
+              const submitBtn = document.querySelector('form button[type="submit"]');
+              if (submitBtn) {
+                submitBtn.scrollIntoView({ behavior: 'smooth', block: 'center' });
+              }
+            }}
+            className="px-3.5 py-1.5 bg-gold-400 hover:bg-gold-500 text-black text-[9px] uppercase tracking-widest font-bold transition-all"
+          >
+            Reserve
+          </button>
+        </div>
+      </div>
+
+      {/* Mobile Expanded Drawer Overlay */}
+      {mobileDrawerOpen && (
+        <>
+          <div 
+            onClick={() => setMobileDrawerOpen(false)}
+            className="lg:hidden fixed inset-0 bg-black/60 backdrop-blur-xs z-35 transition-opacity"
+          />
+          <div className="lg:hidden fixed bottom-[57px] left-0 right-0 z-40 bg-zinc-950 border-t border-zinc-900 p-6 space-y-4 shadow-[0_-20px_40px_rgba(0,0,0,0.95)] animate-fade-in">
+            <div className="flex justify-between items-center border-b border-zinc-900 pb-2">
+              <h4 className="font-serif text-gold-400 text-sm font-semibold uppercase tracking-wider">
+                Cost Breakdown
+              </h4>
+              <button 
+                type="button"
+                onClick={() => setMobileDrawerOpen(false)}
+                className="text-zinc-500 hover:text-white text-xs font-semibold"
+              >
+                ✕
+              </button>
+            </div>
+            
+            <div className="space-y-2.5 text-xs">
+              <div className="flex justify-between">
+                <span className="text-zinc-500">Dates Selected:</span>
+                <span className="text-white font-medium">
+                  {new Date(checkInStr).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })} - {new Date(checkOutStr).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}
+                </span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-zinc-500">Stay Cost ({pricing.nights} {pricing.nights === 1 ? 'night' : 'nights'}):</span>
+                <span className="text-white">₹{pricing.baseTotal.toLocaleString('en-IN')}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-zinc-500">Jacuzzi Prep & Service:</span>
+                <span className="text-white">₹{pricing.serviceFee.toLocaleString('en-IN')}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-zinc-500">GST (5%):</span>
+                <span className="text-white">₹{pricing.taxes.toLocaleString('en-IN')}</span>
+              </div>
+              <div className="border-t border-zinc-900 pt-3 flex justify-between items-baseline">
+                <span className="text-zinc-400 font-semibold uppercase text-[9px] tracking-wider">Total Payable:</span>
+                <span className="text-gold-400 font-serif text-xl font-bold">
+                  ₹{Math.round(pricing.total).toLocaleString('en-IN')}
+                </span>
+              </div>
+            </div>
+          </div>
+        </>
+      )}
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
         {/* Form area */}
@@ -495,8 +622,8 @@ function CheckoutContent() {
 
       {/* 5. Simulated Payment Gateway Modal */}
       {showSimulatedGateway && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4 animate-fade-in">
-          <div className="bg-zinc-950 border border-gold-900/50 w-full max-w-md p-6 md:p-8 space-y-6 relative">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4 overflow-y-auto animate-fade-in">
+          <div className="bg-zinc-950 border border-gold-900/50 w-full max-w-md p-6 md:p-8 space-y-6 relative my-8">
             <div className="flex justify-between items-center border-b border-zinc-900 pb-3">
               <div className="flex flex-col">
                 <span className="text-[10px] text-gold-400 uppercase tracking-widest font-semibold">Razorpay Simulator</span>
@@ -508,6 +635,97 @@ function CheckoutContent() {
               >
                 ✕
               </button>
+            </div>
+
+            {/* Interactive 3D Credit Card Visualizer */}
+            <div className="perspective-1000 w-full max-w-sm h-48 mx-auto relative select-none">
+              <div
+                onClick={() => setIsCardFlipped(!isCardFlipped)}
+                style={{
+                  transform: isCardFlipped ? 'rotateY(180deg)' : 'rotateY(0deg)',
+                  transformStyle: 'preserve-3d',
+                  transition: 'transform 0.6s cubic-bezier(0.4, 0, 0.2, 1)',
+                }}
+                className="w-full h-full relative cursor-pointer"
+              >
+                {/* Front Side */}
+                <div
+                  style={{
+                    backfaceVisibility: 'hidden',
+                    WebkitBackfaceVisibility: 'hidden',
+                  }}
+                  className="absolute inset-0 bg-gradient-to-br from-zinc-900 via-zinc-800 to-zinc-950 border border-gold-400/30 rounded-2xl p-6 shadow-2xl flex flex-col justify-between"
+                >
+                  {/* Subtle Background Pattern */}
+                  <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-gold-400/5 via-transparent to-transparent rounded-2xl pointer-events-none" />
+                  
+                  {/* Header / Brand */}
+                  <div className="flex justify-between items-start z-10">
+                    <div className="w-10 h-7 bg-gradient-to-r from-gold-300 via-gold-200 to-gold-400 rounded-md border border-gold-400/20 relative shadow-inner">
+                      <div className="absolute top-1/2 left-0 right-0 h-[1px] bg-black/20" />
+                      <div className="absolute top-0 bottom-0 left-1/3 w-[1px] bg-black/20" />
+                      <div className="absolute top-0 bottom-0 right-1/3 w-[1px] bg-black/20" />
+                    </div>
+                    
+                    <span className="font-serif text-[10px] tracking-[0.25em] text-gold-400 uppercase font-semibold">
+                      {getCardType(simulatedCardNumber)}
+                    </span>
+                  </div>
+
+                  {/* Card Number */}
+                  <div className="font-mono text-base sm:text-lg tracking-[0.18em] text-white text-center z-10 py-2">
+                    {formatCardNumberVisual(simulatedCardNumber)}
+                  </div>
+
+                  {/* Footer / Card Details */}
+                  <div className="flex justify-between items-end z-10">
+                    <div className="flex flex-col max-w-[70%]">
+                      <span className="text-[7px] text-zinc-500 uppercase tracking-widest font-semibold block mb-0.5">Card Holder</span>
+                      <span className="text-[10px] sm:text-xs text-white uppercase tracking-wider font-medium truncate font-mono">
+                        {simulatedCardName || 'RAHUL DESHMUKH'}
+                      </span>
+                    </div>
+                    <div className="flex flex-col items-end">
+                      <span className="text-[7px] text-zinc-500 uppercase tracking-widest font-semibold block mb-0.5">Expires</span>
+                      <span className="text-[10px] sm:text-xs text-white font-mono">
+                        {simulatedCardExpiry || 'MM/YY'}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Back Side */}
+                <div
+                  style={{
+                    backfaceVisibility: 'hidden',
+                    WebkitBackfaceVisibility: 'hidden',
+                    transform: 'rotateY(180deg)',
+                  }}
+                  className="absolute inset-0 bg-gradient-to-br from-zinc-950 via-zinc-900 to-zinc-950 border border-gold-400/20 rounded-2xl py-6 shadow-2xl flex flex-col justify-between"
+                >
+                  <div className="w-full h-9 bg-zinc-900 mt-2" />
+                  
+                  <div className="px-6 space-y-3">
+                    <div className="flex items-center gap-3">
+                      <div className="flex-1 h-7 bg-zinc-800 rounded-xs flex items-center justify-end px-3">
+                        <span className="text-[9px] text-zinc-600 font-mono tracking-widest">aura-abode</span>
+                      </div>
+                      <div className="w-12 h-7 bg-white text-black font-mono text-xs flex items-center justify-center font-bold italic rounded-xs shadow-inner">
+                        {simulatedCardCvv || '•••'}
+                      </div>
+                    </div>
+                    
+                    <p className="text-[6px] text-zinc-600 leading-normal text-justify uppercase tracking-wider">
+                      This simulated payment visualizer verifies secure booking confirmation for Diti Hospitality and Aura Abode Karjat.
+                    </p>
+                  </div>
+                  
+                  <div className="px-6 flex justify-between items-center text-[7px] text-gold-400/50 uppercase tracking-widest font-mono">
+                    <span>Secure Sandbox Gateway</span>
+                    <span>CVV Hidden</span>
+                  </div>
+                </div>
+              </div>
             </div>
 
             <form onSubmit={handleSimulatedPaymentSubmit} className="space-y-4">
@@ -540,10 +758,9 @@ function CheckoutContent() {
                   <input
                     type="text"
                     required
-                    maxLength={16}
                     placeholder="4111 2222 3333 4444"
                     value={simulatedCardNumber}
-                    onChange={(e) => setSimulatedCardNumber(e.target.value.replace(/\D/g,''))}
+                    onChange={handleCardNumberChange}
                     className="w-full bg-zinc-900 border border-zinc-800 text-white px-3 py-2 text-xs focus:outline-none focus:border-gold-400 transition-colors font-mono"
                   />
                 </div>
@@ -557,7 +774,7 @@ function CheckoutContent() {
                       placeholder="MM/YY"
                       maxLength={5}
                       value={simulatedCardExpiry}
-                      onChange={(e) => setSimulatedCardExpiry(e.target.value)}
+                      onChange={handleCardExpiryChange}
                       className="w-full bg-zinc-900 border border-zinc-800 text-white px-3 py-2 text-xs focus:outline-none focus:border-gold-400 transition-colors font-mono"
                     />
                   </div>
@@ -571,6 +788,8 @@ function CheckoutContent() {
                       placeholder="•••"
                       value={simulatedCardCvv}
                       onChange={(e) => setSimulatedCardCvv(e.target.value.replace(/\D/g,''))}
+                      onFocus={() => setIsCardFlipped(true)}
+                      onBlur={() => setIsCardFlipped(false)}
                       className="w-full bg-zinc-900 border border-zinc-800 text-white px-3 py-2 text-xs focus:outline-none focus:border-gold-400 transition-colors font-mono"
                     />
                   </div>

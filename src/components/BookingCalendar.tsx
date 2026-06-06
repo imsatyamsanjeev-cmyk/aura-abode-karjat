@@ -246,7 +246,7 @@ export default function BookingCalendar() {
                 onClick={() => isCurrentMonth && handleDateClick(date)}
                 onMouseEnter={() => isCurrentMonth && setHoveredDate(date)}
                 disabled={!isCurrentMonth || past || blocked}
-                className={`h-10 sm:h-12 w-full flex items-center justify-center text-sm transition-all duration-200 relative ${bgClass}`}
+                className={`h-9 sm:h-12 w-full flex items-center justify-center text-xs sm:text-sm transition-all duration-200 relative ${bgClass}`}
               >
                 <span>{date.getDate()}</span>
                 {blocked && isCurrentMonth && (
