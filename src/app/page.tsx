@@ -363,7 +363,7 @@ export default function Home() {
                 src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3774.8015099307736!2d73.33230987582236!3d18.89590885759714!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3be7f7d8e5cbce03%3A0xd4f63e686489ae56!2sAura+Abode!5e0!3m2!1sen!2sin!4v1717670000000!5m2!1sen!2sin"
                 width="100%"
                 height="100%"
-                style={{ border: 0, filter: 'invert(90%) hue-rotate(180deg) grayscale(100%) contrast(90%)' }}
+                style={{ border: 0 }}
                 allowFullScreen={true}
                 loading="lazy"
                 referrerPolicy="no-referrer-when-downgrade"
