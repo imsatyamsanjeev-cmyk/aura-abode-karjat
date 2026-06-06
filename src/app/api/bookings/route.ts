@@ -4,11 +4,18 @@ import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { razorpay } from '@/lib/razorpay';
 import { calculatePrice } from '@/lib/pricing';
-import { normalizeDate } from '@/lib/ical';
+import { normalizeDate, syncExternalFeeds } from '@/lib/ical';
 
 // GET: Fetch all blocked dates from today onwards
 export async function GET() {
   try {
+    // Sync external feeds inline to ensure calendar blocks are always up to date
+    try {
+      await syncExternalFeeds();
+    } catch (syncErr) {
+      console.error('Failed to sync external feeds inline:', syncErr);
+    }
+
     const today = new Date();
     today.setHours(0, 0, 0, 0);
 

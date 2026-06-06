@@ -17,16 +17,30 @@ export default function BookingCalendar() {
   const [priceDetails, setPriceDetails] = useState<PriceBreakdown | null>(null);
   const [hoveredDate, setHoveredDate] = useState<Date | null>(null);
 
-  // Load blocked dates from state
+  // Load blocked dates from database (with local storage fallback)
   useEffect(() => {
-    // We load blocked dates
-    const fetchBlocked = () => {
+    const fetchBlocked = async () => {
+      try {
+        const res = await fetch('/api/bookings');
+        if (res.ok) {
+          const data = await res.json();
+          if (data.success && Array.isArray(data.blockedDates)) {
+            setBlockedDates(data.blockedDates);
+            return;
+          }
+        }
+      } catch (err) {
+        console.warn('Failed to fetch live blocked dates, falling back to local storage:', err);
+      }
+      
+      // Fallback to local storage if API fails or offline
       const dates = getLocalBlockedDates().map(d => d.date);
       setBlockedDates(dates);
     };
+
     fetchBlocked();
     
-    // Add event listener to reload blocked dates if they change (e.g. from sync)
+    // Add event listener to reload blocked dates if they change
     window.addEventListener('storage', fetchBlocked);
     return () => window.removeEventListener('storage', fetchBlocked);
   }, []);

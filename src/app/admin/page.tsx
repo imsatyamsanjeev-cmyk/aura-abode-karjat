@@ -73,7 +73,53 @@ export default function AdminDashboard() {
     }
   }, [router]);
 
-  const loadDashboardData = () => {
+  const loadDashboardData = async () => {
+    try {
+      // 1. Fetch bookings & blocked dates from live database API
+      const res = await fetch('/api/admin/bookings');
+      if (res.ok) {
+        const data = await res.json();
+        if (data.success) {
+          // Normalize formatting from backend to match ClientBooking / ClientBlockedDate expectations
+          const formattedBookings = data.bookings.map((b: any) => ({
+            id: b.id,
+            checkIn: b.checkIn.split('T')[0],
+            checkOut: b.checkOut.split('T')[0],
+            guestName: b.guestName,
+            guestEmail: b.guestEmail || '',
+            guestPhone: b.guestPhone || '',
+            guestCount: b.guestCount,
+            totalAmount: b.totalAmount,
+            status: b.status,
+            platform: b.platform,
+            createdAt: b.createdAt
+          }));
+          
+          const formattedBlocks = data.blockedDates.map((b: any) => ({
+            date: b.date.split('T')[0],
+            reason: b.reason,
+            bookingId: b.bookingId || undefined
+          }));
+
+          setBookings(formattedBookings);
+          setBlockedDates(formattedBlocks);
+        }
+      }
+
+      // 2. Fetch feeds from live database API
+      const feedsRes = await fetch('/api/admin/feeds');
+      if (feedsRes.ok) {
+        const feedsData = await feedsRes.json();
+        if (feedsData.success && Array.isArray(feedsData.feeds)) {
+          setFeeds(feedsData.feeds);
+          return;
+        }
+      }
+    } catch (err) {
+      console.warn('Failed to load dashboard data from API, using local fallback:', err);
+    }
+
+    // Fallback
     setBookings(getLocalBookings());
     setBlockedDates(getLocalBlockedDates());
     setFeeds(getLocalFeeds());
@@ -95,12 +141,12 @@ export default function AdminDashboard() {
       });
       const data = await res.json();
       if (res.ok && data.success) {
-        setSyncMessage('Synchronized with Airbnb/Booking.com APIs successfully!');
+        setSyncMessage('Synchronized with Airbnb APIs successfully!');
       } else {
         throw new Error(data.error || 'API failed');
       }
     } catch (err) {
-      console.warn('Backend sync API failed. Simulating feed synchronization.');
+      console.warn('Backend sync API failed. Simulating feed synchronization.', err);
       // Simulate sync: add a random block date from today to mimic external block
       const today = new Date();
       today.setDate(today.getDate() + 15);
@@ -127,28 +173,48 @@ export default function AdminDashboard() {
   };
 
   // 2. Add custom blocked date (e.g. maintenance)
-  const handleAddBlock = (e: React.FormEvent) => {
+  const handleAddBlock = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!blockDate) return;
 
+    try {
+      const res = await fetch('/api/admin/bookings', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          action: 'block',
+          date: blockDate,
+          reason: blockReason || 'MAINTENANCE'
+        })
+      });
+      const data = await res.json();
+      if (res.ok && data.success) {
+        setBlockDate('');
+        loadDashboardData();
+        alert('Date blocked successfully!');
+        return;
+      } else {
+        alert('Failed to block date: ' + (data.error || 'Server error'));
+      }
+    } catch (err) {
+      console.error('Error connecting to block date API, falling back locally:', err);
+    }
+
+    // Local Storage Fallback
     const manualBlocks = getManualBlocks();
-    
-    // Check duplication
     if (manualBlocks.some(b => b.date === blockDate)) {
       alert('This date is already blocked.');
       return;
     }
-
     const updated = [...manualBlocks, { date: blockDate, reason: blockReason }];
     saveManualBlocks(updated);
-    
     setBlockDate('');
     loadDashboardData();
-    alert('Date blocked successfully!');
+    alert('Date blocked locally (fallback).');
   };
 
   // 3. Unblock a date
-  const handleRemoveBlock = (dateStr: string) => {
+  const handleRemoveBlock = async (dateStr: string) => {
     if (!confirm(`Are you sure you want to release the block for ${dateStr}?`)) return;
 
     // Check if it is a direct booking block
@@ -165,16 +231,36 @@ export default function AdminDashboard() {
       return;
     }
 
-    // Remove from manual blocks
+    try {
+      const res = await fetch('/api/admin/bookings', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          action: 'unblock',
+          date: dateStr
+        })
+      });
+      const data = await res.json();
+      if (res.ok && data.success) {
+        loadDashboardData();
+        alert('Block released successfully!');
+        return;
+      } else {
+        alert('Failed to release block: ' + (data.error || 'Server error'));
+      }
+    } catch (err) {
+      console.error('Error connecting to unblock API, falling back locally:', err);
+    }
+
+    // Local Storage Fallback
     const manualBlocks = getManualBlocks();
     const updated = manualBlocks.filter(b => b.date !== dateStr);
     saveManualBlocks(updated);
-    
     loadDashboardData();
   };
 
   // 4. Create Manual Booking
-  const handleCreateManualBooking = (e: React.FormEvent) => {
+  const handleCreateManualBooking = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!newCheckIn || !newCheckOut || !newGuestName) {
       alert('Fill in required fields.');
@@ -189,17 +275,50 @@ export default function AdminDashboard() {
       return;
     }
 
-    // Check conflict
+    try {
+      const res = await fetch('/api/admin/bookings', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          action: 'create_booking',
+          checkIn: newCheckIn,
+          checkOut: newCheckOut,
+          guestName: newGuestName,
+          guestEmail: newGuestEmail,
+          guestPhone: newGuestPhone,
+          guestCount: newGuestCount,
+          totalAmount: newTotalAmount || 0,
+          status: 'CONFIRMED'
+        })
+      });
+      const data = await res.json();
+      if (res.ok && data.success) {
+        setNewCheckIn('');
+        setNewCheckOut('');
+        setNewGuestName('');
+        setNewGuestEmail('');
+        setNewGuestPhone('');
+        setNewTotalAmount(0);
+        loadDashboardData();
+        alert('Manual booking created successfully!');
+        return;
+      } else {
+        alert('Failed to create booking: ' + (data.error || 'Conflict detected'));
+        return;
+      }
+    } catch (err) {
+      console.error('Error connecting to create booking API, falling back locally:', err);
+    }
+
+    // Local Storage Fallback
     const datesToBlock: string[] = [];
     const current = new Date(checkInDate);
     while (current < checkOutDate) {
       datesToBlock.push(current.toISOString().split('T')[0]);
       current.setDate(current.getDate() + 1);
     }
-
     const allBlocks = getLocalBlockedDates().map(d => d.date);
     const conflicts = datesToBlock.filter(d => allBlocks.includes(d));
-
     if (conflicts.length > 0) {
       alert(`Conflict detected on dates: ${conflicts.join(', ')}. Booking failed.`);
       return;
@@ -221,36 +340,78 @@ export default function AdminDashboard() {
 
     const currentBookings = getLocalBookings();
     saveLocalBookings([...currentBookings, newBooking]);
-
-    // Reset inputs
     setNewCheckIn('');
     setNewCheckOut('');
     setNewGuestName('');
     setNewGuestEmail('');
     setNewGuestPhone('');
     setNewTotalAmount(0);
-
     loadDashboardData();
-    alert('Manual booking created successfully!');
+    alert('Manual booking created locally (fallback).');
   };
 
   // 5. Cancel booking
-  const handleCancelBooking = (bookingId: string) => {
+  const handleCancelBooking = async (bookingId: string) => {
     if (!confirm('Are you sure you want to cancel this booking and release its calendar blocks?')) return;
 
+    try {
+      const res = await fetch('/api/admin/bookings', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          action: 'cancel_booking',
+          bookingId
+        })
+      });
+      const data = await res.json();
+      if (res.ok && data.success) {
+        loadDashboardData();
+        alert('Booking cancelled successfully.');
+        return;
+      } else {
+        alert('Failed to cancel booking: ' + (data.error || 'Server error'));
+      }
+    } catch (err) {
+      console.error('Error connecting to cancel booking API, falling back locally:', err);
+    }
+
+    // Local Storage Fallback
     const currentBookings = getLocalBookings();
     const updated = currentBookings.map(b => b.id === bookingId ? { ...b, status: 'CANCELLED' as const } : b);
     saveLocalBookings(updated);
-
     loadDashboardData();
-    alert('Booking cancelled successfully.');
+    alert('Booking cancelled locally (fallback).');
   };
 
   // 6. iCal Feed addition
-  const handleAddFeed = (e: React.FormEvent) => {
+  const handleAddFeed = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!newPlatformName || !newFeedUrl) return;
 
+    try {
+      const res = await fetch('/api/admin/feeds', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          platformName: newPlatformName,
+          feedUrl: newFeedUrl
+        })
+      });
+      const data = await res.json();
+      if (res.ok && data.success) {
+        setNewPlatformName('');
+        setNewFeedUrl('');
+        loadDashboardData();
+        alert('Sync feed registered!');
+        return;
+      } else {
+        alert('Failed to register feed: ' + (data.error || 'Server error'));
+      }
+    } catch (err) {
+      console.error('Error connecting to feeds API, falling back locally:', err);
+    }
+
+    // Local Storage Fallback
     const currentFeeds = getLocalFeeds();
     const newFeed: ClientFeed = {
       id: 'feed_' + Math.random().toString(36).substring(2, 9),
@@ -258,17 +419,38 @@ export default function AdminDashboard() {
       feedUrl: newFeedUrl,
       lastSyncedAt: 'Never'
     };
-
     saveLocalFeeds([...currentFeeds, newFeed]);
     setNewPlatformName('');
     setNewFeedUrl('');
     loadDashboardData();
-    alert('Sync feed registered!');
+    alert('Sync feed registered locally (fallback).');
   };
 
   // 7. iCal Feed removal
-  const handleRemoveFeed = (feedId: string) => {
+  const handleRemoveFeed = async (feedId: string) => {
     if (!confirm('Remove this sync feed?')) return;
+
+    try {
+      const res = await fetch('/api/admin/feeds', {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          id: feedId
+        })
+      });
+      const data = await res.json();
+      if (res.ok && data.success) {
+        loadDashboardData();
+        alert('Sync feed removed.');
+        return;
+      } else {
+        alert('Failed to remove feed: ' + (data.error || 'Server error'));
+      }
+    } catch (err) {
+      console.error('Error connecting to remove feed API, falling back locally:', err);
+    }
+
+    // Local Storage Fallback
     const currentFeeds = getLocalFeeds();
     const updated = currentFeeds.filter(f => f.id !== feedId);
     saveLocalFeeds(updated);
