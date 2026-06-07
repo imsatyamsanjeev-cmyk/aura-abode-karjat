@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { Sparkles, Check, Play, Clock, Info, ShieldAlert, Wifi, Waves, Trees, Tv, BookOpen, Coffee } from 'lucide-react';
 import Lightbox from '@/components/GalleryLightbox';
 
@@ -104,10 +105,13 @@ export default function PropertyDetails() {
       {/* 1. Header Banner */}
       <section className="relative h-[45vh] flex items-center justify-center overflow-hidden border-b border-gold-400/10">
         <div className="absolute inset-0 bg-black/75 z-10" />
-        <img
+        <Image
           src="/images/bedroom/bedroom2.jpeg"
           alt="Aura Abode Banner"
-          className="absolute inset-0 w-full h-full object-cover object-center scale-105"
+          fill
+          priority
+          sizes="100vw"
+          className="object-cover object-center scale-105"
         />
         <div className="relative z-20 text-center space-y-4 px-4 mt-12">
           <span className="text-gold-400 text-xs font-sans tracking-[0.45em] uppercase font-semibold">
@@ -211,10 +215,12 @@ export default function PropertyDetails() {
                 <div className="absolute inset-0 bg-black/20 group-hover:bg-black/50 transition-colors duration-300 z-10 flex items-center justify-center">
                   <span className="text-[10px] text-white opacity-0 group-hover:opacity-100 uppercase tracking-widest font-semibold bg-black/70 px-3 py-1.5 transition-all border border-gold-400/20">View</span>
                 </div>
-                <img
+                <Image
                   src={img.src}
                   alt={img.alt}
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                  fill
+                  sizes="(max-width: 768px) 50vw, (max-width: 1024px) 33vw, 16vw"
+                  className="object-cover group-hover:scale-105 transition-transform duration-500"
                 />
               </div>
             ))}

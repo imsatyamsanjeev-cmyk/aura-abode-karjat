@@ -1,7 +1,22 @@
 import type { Metadata, Viewport } from 'next';
+import { Cormorant_Garamond, Montserrat } from 'next/font/google';
 import './globals.css';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
+
+const cormorantGaramond = Cormorant_Garamond({
+  subsets: ['latin'],
+  weight: ['300', '400', '500', '600', '700'],
+  variable: '--font-serif',
+  display: 'swap',
+});
+
+const montserrat = Montserrat({
+  subsets: ['latin'],
+  weight: ['100', '200', '300', '400', '500', '600', '700'],
+  variable: '--font-sans',
+  display: 'swap',
+});
 
 export const viewport: Viewport = {
   width: 'device-width',
@@ -31,7 +46,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className="scroll-smooth">
-      <body className="bg-background text-foreground min-h-screen flex flex-col font-sans antialiased">
+      <body className={`${montserrat.variable} ${cormorantGaramond.variable} bg-background text-foreground min-h-screen flex flex-col font-sans antialiased`}>
         <Navbar />
         {/* Main Content wrapper with padding-top to clear the fixed navbar */}
         <main className="flex-grow pt-16">

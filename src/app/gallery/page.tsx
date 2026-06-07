@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import Image from 'next/image';
 import Lightbox from '@/components/GalleryLightbox';
 import { Camera, Film, Sparkles, SlidersHorizontal } from 'lucide-react';
 
@@ -168,10 +169,12 @@ export default function GalleryPage() {
             >
               <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/10 to-transparent opacity-60 group-hover:opacity-90 transition-opacity z-10" />
               
-              <img
+              <Image
                 src={item.src}
                 alt={item.alt}
-                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                fill
+                sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                className="object-cover group-hover:scale-105 transition-transform duration-700"
               />
 
               {/* Title & Zoom Info overlay */}

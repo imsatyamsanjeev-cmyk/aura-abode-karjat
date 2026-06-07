@@ -1,5 +1,6 @@
 import React from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { Calendar, Shield, Sparkles, MessageCircle, MapPin, Compass, Tv, Key, Waves, Trees, Star, Quote } from 'lucide-react';
 
 export default function Home() {
@@ -54,10 +55,13 @@ export default function Home() {
         {/* Background Image */}
         <div className="absolute inset-0 z-0">
           <div className="absolute inset-0 bg-black/70 z-10" />
-          <img
+          <Image
             src="/images/valleys/valley1.jpeg"
             alt="Aura Abode Karjat Luxury Studio"
-            className="w-full h-full object-cover object-center scale-105 animate-[zoom_20s_infinite_alternate]"
+            fill
+            priority
+            sizes="100vw"
+            className="object-cover object-center scale-105 animate-[zoom_20s_infinite_alternate]"
           />
         </div>
 
@@ -134,52 +138,64 @@ export default function Home() {
             <div className="space-y-6">
               <div className="aspect-[4/3] overflow-hidden border border-gold-400/10 group relative">
                 <div className="absolute inset-0 bg-black/10 group-hover:bg-transparent transition-colors duration-300 z-10" />
-                <img
+                <Image
                   src="/images/jacuzzi/jacuzzi1.jpeg"
                   alt="Private Heated Jacuzzi"
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                  fill
+                  sizes="(max-width: 768px) 50vw, (max-width: 1024px) 35vw, 30vw"
+                  className="object-cover group-hover:scale-105 transition-transform duration-700"
                 />
               </div>
               <div className="aspect-[4/3] overflow-hidden border border-gold-400/10 group relative">
                 <div className="absolute inset-0 bg-black/10 group-hover:bg-transparent transition-colors duration-300 z-10" />
-                <img
+                <Image
                   src="/images/bedroom/bedroom1.jpeg"
                   alt="Studio Bedroom Suite"
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                  fill
+                  sizes="(max-width: 768px) 50vw, (max-width: 1024px) 35vw, 30vw"
+                  className="object-cover group-hover:scale-105 transition-transform duration-700"
                 />
               </div>
               <div className="aspect-[4/3] overflow-hidden border border-gold-400/10 group relative">
                 <div className="absolute inset-0 bg-black/10 group-hover:bg-transparent transition-colors duration-300 z-10" />
-                <img
+                <Image
                   src="/images/living-room/living4.jpeg"
                   alt="Modern Studio Seating"
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                  fill
+                  sizes="(max-width: 768px) 50vw, (max-width: 1024px) 35vw, 30vw"
+                  className="object-cover group-hover:scale-105 transition-transform duration-700"
                 />
               </div>
             </div>
             <div className="space-y-6 pt-16">
               <div className="aspect-[4/3] overflow-hidden border border-gold-400/10 group relative">
                 <div className="absolute inset-0 bg-black/10 group-hover:bg-transparent transition-colors duration-300 z-10" />
-                <img
+                <Image
                   src="/images/garden/garden1.jpeg"
                   alt="Private Enclosed Garden Lawn"
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                  fill
+                  sizes="(max-width: 768px) 50vw, (max-width: 1024px) 35vw, 30vw"
+                  className="object-cover group-hover:scale-105 transition-transform duration-700"
                 />
               </div>
               <div className="aspect-[4/3] overflow-hidden border border-gold-400/10 group relative">
                 <div className="absolute inset-0 bg-black/10 group-hover:bg-transparent transition-colors duration-300 z-10" />
-                <img
+                <Image
                   src="/images/living-room/living1.jpeg"
                   alt="Chic Studio Interior Lounge"
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                  fill
+                  sizes="(max-width: 768px) 50vw, (max-width: 1024px) 35vw, 30vw"
+                  className="object-cover group-hover:scale-105 transition-transform duration-700"
                 />
               </div>
               <div className="aspect-[4/3] overflow-hidden border border-gold-400/10 group relative">
                 <div className="absolute inset-0 bg-black/10 group-hover:bg-transparent transition-colors duration-300 z-10" />
-                <img
+                <Image
                   src="/images/garden/garden3.jpeg"
                   alt="Lush Abode Landscaping"
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                  fill
+                  sizes="(max-width: 768px) 50vw, (max-width: 1024px) 35vw, 30vw"
+                  className="object-cover group-hover:scale-105 transition-transform duration-700"
                 />
               </div>
             </div>
@@ -394,10 +410,12 @@ export default function Home() {
         {/* Background Image */}
         <div className="absolute inset-0 z-0">
           <div className="absolute inset-0 bg-black/85 z-10" />
-          <img
+          <Image
             src="/images/garden/garden2.jpeg"
             alt="Aura Abode Garden"
-            className="w-full h-full object-cover object-center"
+            fill
+            sizes="100vw"
+            className="object-cover object-center"
           />
         </div>
 

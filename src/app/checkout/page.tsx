@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, Suspense } from 'react';
 import Link from 'next/link';
+import Script from 'next/script';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { ShieldCheck, Calendar, Info, Loader2, ArrowLeft, CheckCircle2, Copy } from 'lucide-react';
 import { calculatePrice, PriceBreakdown } from '@/lib/pricing';
@@ -43,17 +44,7 @@ function CheckoutContent() {
   // Mobile summary drawer state
   const [mobileDrawerOpen, setMobileDrawerOpen] = useState(false);
 
-  // Load Razorpay SDK Script dynamically
-  useEffect(() => {
-    const script = document.createElement('script');
-    script.src = 'https://checkout.razorpay.com/v1/checkout.js';
-    script.async = true;
-    document.body.appendChild(script);
-    
-    return () => {
-      document.body.removeChild(script);
-    };
-  }, []);
+
 
   // Compute pricing
   useEffect(() => {
@@ -364,6 +355,10 @@ function CheckoutContent() {
   // CHECKOUT PAGE FORM VIEW
   return (
     <div className="max-w-7xl mx-auto px-4 py-12 text-white pb-24 lg:pb-12">
+      <Script
+        src="https://checkout.razorpay.com/v1/checkout.js"
+        strategy="lazyOnload"
+      />
       <Link href="/booking" className="inline-flex items-center text-xs text-zinc-500 hover:text-gold-400 transition-colors mb-8">
         <ArrowLeft className="w-4 h-4 mr-2" /> Back to Availability
       </Link>

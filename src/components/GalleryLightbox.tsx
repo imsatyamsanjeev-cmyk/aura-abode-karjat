@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useEffect, useCallback } from 'react';
+import Image from 'next/image';
 import { X, ChevronLeft, ChevronRight } from 'lucide-react';
 
 interface ImageItem {
@@ -77,10 +78,12 @@ export default function GalleryLightbox({
 
         {/* Active Image container */}
         <div className="w-full h-full max-w-4xl max-h-[75vh] mx-auto flex items-center justify-center select-none relative px-6">
-          <img
+          <Image
             src={currentImage.src}
             alt={currentImage.alt}
-            className="max-w-full max-h-full object-contain animate-fade-in shadow-[0_10px_50px_rgba(0,0,0,0.9)] border border-zinc-900"
+            fill
+            sizes="100vw"
+            className="object-contain animate-fade-in shadow-[0_10px_50px_rgba(0,0,0,0.9)] border border-zinc-900"
           />
         </div>
 
