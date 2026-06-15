@@ -6,6 +6,8 @@ import { razorpay } from '@/lib/razorpay';
 import { calculatePrice } from '@/lib/pricing';
 import { normalizeDate, syncExternalFeeds } from '@/lib/ical';
 
+import { sendBookingConfirmationEmail, sendAdminBookingAlertEmail, sendSMSNotification } from '@/lib/notifications';
+
 // GET: Fetch all blocked dates from today onwards
 export async function GET() {
   try {
@@ -41,7 +43,7 @@ export async function GET() {
   }
 }
 
-// POST: Create a pending booking & generate Razorpay order
+// POST: Create a confirmed booking / direct lead and block dates
 export async function POST(request: Request) {
   try {
     const body = await request.json();
@@ -82,80 +84,55 @@ export async function POST(request: Request) {
     // 3. Calculate price details
     const pricing = calculatePrice(checkInDate, checkOutDate);
 
-    // 4. Create pending booking in DB
-    const booking = await prisma.booking.create({
-      data: {
-        checkIn: checkInDate,
-        checkOut: checkOutDate,
-        guestName,
-        guestEmail,
-        guestPhone,
-        guestCount: parseInt(guestCount) || 2,
-        totalAmount: pricing.total,
-        status: 'PENDING',
-        platform: 'DIRECT',
-      },
-    });
-
-    // 5. Create Razorpay order (or use mock order in test/preview mode)
-    // Razorpay amount is in paise (1 INR = 100 paise)
-    const amountInPaise = Math.round(pricing.total * 100);
-    
-    let razorpayOrder = null;
-    const isMockMode = !process.env.RAZORPAY_KEY_ID || process.env.RAZORPAY_KEY_ID === 'rzp_test_placeholder_key';
-
-    if (isMockMode) {
-      const mockOrderId = `order_mock_${Math.random().toString(36).substring(2, 11).toUpperCase()}`;
-      await prisma.booking.update({
-        where: { id: booking.id },
-        data: { orderId: mockOrderId },
+    // 4. Create confirmed booking & block dates in DB transaction
+    const booking = await prisma.$transaction(async (tx) => {
+      const created = await tx.booking.create({
+        data: {
+          checkIn: checkInDate,
+          checkOut: checkOutDate,
+          guestName,
+          guestEmail,
+          guestPhone,
+          guestCount: parseInt(guestCount) || 2,
+          totalAmount: pricing.total,
+          status: 'CONFIRMED',
+          platform: 'DIRECT',
+          paymentId: 'OFFLINE_LEAD',
+        },
       });
-      razorpayOrder = {
-        id: mockOrderId,
-        amount: amountInPaise,
-        currency: 'INR',
-      };
-    } else {
-      try {
-        razorpayOrder = await razorpay.orders.create({
-          amount: amountInPaise,
-          currency: 'INR',
-          receipt: booking.id,
-          notes: {
-            guestName,
-            guestEmail,
-            bookingId: booking.id,
+
+      // Block dates
+      for (const d of datesToBlock) {
+        await tx.blockedDate.upsert({
+          where: { date: d },
+          update: {
+            reason: 'BOOKING',
+            bookingId: created.id,
+          },
+          create: {
+            date: d,
+            reason: 'BOOKING',
+            bookingId: created.id,
           },
         });
-
-        // Update the booking with orderId
-        await prisma.booking.update({
-          where: { id: booking.id },
-          data: { orderId: razorpayOrder.id },
-        });
-      } catch (rzpErr: any) {
-        console.error('Razorpay Order creation failed:', rzpErr);
-        // We still keep the pending booking, client can retry or admin can manage.
-        // But return order creation error to client.
-        return NextResponse.json({
-          success: false,
-          error: 'Payment gateway order creation failed. Please try again.',
-        }, { status: 500 });
       }
-    }
+
+      return created;
+    });
+
+    // 5. Send notifications asynchronously
+    sendBookingConfirmationEmail(booking).catch(console.error);
+    sendAdminBookingAlertEmail(booking).catch(console.error);
+    
+    const smsMessage = `Hi ${booking.guestName}, your booking request for Aura Abode Karjat (${new Date(booking.checkIn).toLocaleDateString()} to ${new Date(booking.checkOut).toLocaleDateString()}) has been received! Booking ID: ${booking.id.substring(0, 8)}. We will contact you shortly to confirm your stay.`;
+    sendSMSNotification(booking.guestPhone, smsMessage).catch(console.error);
 
     return NextResponse.json({
       success: true,
       booking,
-      razorpayOrder: {
-        id: razorpayOrder.id,
-        amount: razorpayOrder.amount,
-        currency: razorpayOrder.currency,
-      },
-      isMockMode,
     });
   } catch (error) {
-    console.error('Error creating pending booking:', error);
+    console.error('Error creating direct booking lead:', error);
     return NextResponse.json({ success: false, error: 'Internal Server Error' }, { status: 500 });
   }
 }

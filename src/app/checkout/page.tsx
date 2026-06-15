@@ -31,20 +31,8 @@ function CheckoutContent() {
   // Success state
   const [confirmedBooking, setConfirmedBooking] = useState<ClientBooking | null>(null);
   
-  // Simulated Payment Modal state
-  const [showSimulatedGateway, setShowSimulatedGateway] = useState(false);
-  const [simulatedCardName, setSimulatedCardName] = useState('');
-  const [simulatedCardNumber, setSimulatedCardNumber] = useState('');
-  const [simulatedCardExpiry, setSimulatedCardExpiry] = useState('');
-  const [simulatedCardCvv, setSimulatedCardCvv] = useState('');
-  const [isCardFlipped, setIsCardFlipped] = useState(false);
-  const [paymentError, setPaymentError] = useState('');
-  const [activeBooking, setActiveBooking] = useState<any>(null);
-
   // Mobile summary drawer state
   const [mobileDrawerOpen, setMobileDrawerOpen] = useState(false);
-
-
 
   // Compute pricing
   useEffect(() => {
@@ -65,11 +53,19 @@ function CheckoutContent() {
     );
   }
 
-  // Real Razorpay booking handler
-  const handleRealRazorpayCheckout = async () => {
+  const handleFormSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!guestName || !guestEmail || !guestPhone) {
+      alert('Please fill in all guest details.');
+      return;
+    }
+    if (!isTermsAccepted) {
+      alert('Please accept the Terms and Conditions.');
+      return;
+    }
+
     setLoading(true);
     try {
-      // 1. Create Pending Booking & Order on backend
       const res = await fetch('/api/bookings', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -85,197 +81,35 @@ function CheckoutContent() {
 
       const data = await res.json();
       if (!res.ok || !data.success) {
-        throw new Error(data.error || 'Failed to initialize booking.');
+        throw new Error(data.error || 'Failed to submit booking request.');
       }
 
-      const { booking, razorpayOrder, isMockMode } = data;
-      setActiveBooking(booking);
-
-      if (isMockMode) {
-        setShowSimulatedGateway(true);
-        setLoading(false);
-        return;
-      }
-
-      // 2. Open Razorpay Overlay
-      const options = {
-        key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID || 'rzp_test_placeholder_key',
-        amount: razorpayOrder.amount,
-        currency: razorpayOrder.currency,
-        name: 'Aura Abode Karjat',
-        description: `Stay: ${checkInStr} to ${checkOutStr}`,
-        order_id: razorpayOrder.id,
-        handler: async function (response: any) {
-          setLoading(true);
-          try {
-            // Verify payment
-            const verifyRes = await fetch('/api/checkout/verify', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({
-                razorpay_order_id: response.razorpay_order_id,
-                razorpay_payment_id: response.razorpay_payment_id,
-                razorpay_signature: response.razorpay_signature,
-                booking_id: booking.id,
-              }),
-            });
-
-            const verifyData = await verifyRes.json();
-            if (verifyRes.ok && verifyData.success) {
-              // Save to localStorage as well for local tracking
-              const localSaved = addLocalBooking({
-                id: booking.id,
-                checkIn: checkInStr,
-                checkOut: checkOutStr,
-                guestName,
-                guestEmail,
-                guestPhone,
-                guestCount: guestsNum,
-                totalAmount: pricing.total,
-                status: 'CONFIRMED',
-                platform: 'DIRECT',
-                paymentId: response.razorpay_payment_id,
-                orderId: response.razorpay_order_id,
-              });
-              setConfirmedBooking(localSaved);
-            } else {
-              alert('Payment verification failed: ' + verifyData.error);
-            }
-          } catch (verifyErr) {
-            console.error(verifyErr);
-            alert('An error occurred during payment verification.');
-          } finally {
-            setLoading(false);
-          }
-        },
-        prefill: {
-          name: guestName,
-          email: guestEmail,
-          contact: guestPhone,
-        },
-        theme: {
-          color: '#c5a880',
-        },
-      };
-
-      const rzp = new (window as any).Razorpay(options);
-      rzp.open();
-      
-    } catch (err: any) {
-      console.warn('Real Razorpay initialization failed (running in static / client-only mode):', err.message);
-      // Fallback to simulated payment gateway modal!
-      setShowSimulatedGateway(true);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleSimulatedPaymentSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!simulatedCardName || !simulatedCardNumber || !simulatedCardExpiry || !simulatedCardCvv) {
-      setPaymentError('Please fill in all card details.');
-      return;
-    }
-
-    setLoading(true);
-    setPaymentError('');
-    
-    try {
-      const mockPaymentId = 'pay_mock_' + Math.random().toString(36).substring(2, 11).toUpperCase();
-      const mockSignature = 'sig_mock_' + Math.random().toString(36).substring(2, 15);
-
-      // Verify mock order on the backend to register the booking, block calendar dates, and trigger notifications
-      const verifyRes = await fetch('/api/checkout/verify', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          razorpay_order_id: activeBooking ? activeBooking.orderId : ('order_mock_' + Math.random().toString(36).substring(2, 11).toUpperCase()),
-          razorpay_payment_id: mockPaymentId,
-          razorpay_signature: mockSignature,
-          booking_id: activeBooking ? activeBooking.id : ('booking_mock_' + Math.random().toString(36).substring(2, 11).toUpperCase()),
-        }),
+      // Save to localStorage direct lead booking state
+      const localSaved = addLocalBooking({
+        id: data.booking.id,
+        checkIn: checkInStr,
+        checkOut: checkOutStr,
+        guestName,
+        guestEmail,
+        guestPhone,
+        guestCount: guestsNum,
+        totalAmount: pricing.total,
+        status: 'CONFIRMED',
+        platform: 'DIRECT',
+        paymentId: 'OFFLINE_LEAD',
       });
 
-      const verifyData = await verifyRes.json();
-      if (verifyRes.ok && verifyData.success) {
-        const localSaved = addLocalBooking({
-          id: activeBooking ? activeBooking.id : 'mock_id',
-          checkIn: checkInStr,
-          checkOut: checkOutStr,
-          guestName,
-          guestEmail,
-          guestPhone,
-          guestCount: guestsNum,
-          totalAmount: pricing.total,
-          status: 'CONFIRMED',
-          platform: 'DIRECT',
-          paymentId: mockPaymentId,
-          orderId: activeBooking ? activeBooking.orderId : 'mock_order_id',
-        });
-        setConfirmedBooking(localSaved);
-        setShowSimulatedGateway(false);
-      } else {
-        setPaymentError(verifyData.error || 'Payment verification failed.');
-      }
+      setConfirmedBooking(localSaved);
     } catch (err: any) {
-      setPaymentError('An error occurred during payment verification.');
+      alert(err.message || 'An error occurred. Please try again.');
     } finally {
       setLoading(false);
     }
-  };
-
-  const handleFormSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!guestName || !guestEmail || !guestPhone) {
-      alert('Please fill in all guest details.');
-      return;
-    }
-    if (!isTermsAccepted) {
-      alert('Please accept the Terms and Conditions.');
-      return;
-    }
-    handleRealRazorpayCheckout();
   };
 
   const copyToClipboard = (text: string) => {
     navigator.clipboard.writeText(text);
     alert('Copied to clipboard!');
-  };
-
-  // Credit Card formatting helpers
-  const getCardType = (num: string) => {
-    if (!num) return 'SECURE CARD';
-    if (num.startsWith('4')) return 'VISA';
-    const parsed = parseInt(num.substring(0, 2));
-    if (parsed >= 51 && parsed <= 55) return 'MASTERCARD';
-    if (num.startsWith('34') || num.startsWith('37')) return 'AMEX';
-    if (num.startsWith('6011') || num.startsWith('65')) return 'DISCOVER';
-    return 'CREDIT CARD';
-  };
-
-  const formatCardNumberVisual = (num: string) => {
-    const padded = num.padEnd(16, '•');
-    const parts = [];
-    for (let i = 0; i < 16; i += 4) {
-      parts.push(padded.substring(i, i + 4));
-    }
-    return parts.join(' ');
-  };
-
-  const handleCardNumberChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const raw = e.target.value.replace(/\D/g, '');
-    if (raw.length <= 16) {
-      setSimulatedCardNumber(raw);
-    }
-  };
-
-  const handleCardExpiryChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    let val = e.target.value.replace(/\D/g, '');
-    if (val.length > 4) val = val.substring(0, 4);
-    if (val.length > 2) {
-      val = val.substring(0, 2) + '/' + val.substring(2);
-    }
-    setSimulatedCardExpiry(val);
   };
 
   // SUCCESS CONFIRMATION VIEW
@@ -290,11 +124,11 @@ function CheckoutContent() {
           </div>
           
           <h2 className="font-serif text-3xl md:text-4xl text-white font-bold tracking-wide">
-            Reservation Confirmed!
+            Request Submitted!
           </h2>
           
           <p className="text-zinc-400 text-sm max-w-md mx-auto leading-relaxed">
-            Dear {confirmedBooking.guestName}, your luxury stay at Aura Abode Karjat has been successfully booked. A confirmation email and details have been logged.
+            Dear {confirmedBooking.guestName}, your booking request for Aura Abode Karjat has been successfully submitted. Our team will contact you shortly to coordinate payment and check-in details.
           </p>
 
           {/* Invoice table details */}
@@ -323,13 +157,13 @@ function CheckoutContent() {
               <span className="text-zinc-500">Guests:</span>
               <span className="text-white text-right">{confirmedBooking.guestCount} {confirmedBooking.guestCount === 1 ? 'Guest' : 'Guests'}</span>
 
-              <span className="text-zinc-500 border-t border-zinc-800 pt-2 mt-2">Total Amount Paid:</span>
+              <span className="text-zinc-500 border-t border-zinc-800 pt-2 mt-2">Estimated Amount:</span>
               <span className="text-gold-400 font-bold text-sm text-right border-t border-zinc-800 pt-2 mt-2">
                 ₹{Math.round(confirmedBooking.totalAmount).toLocaleString('en-IN')}
               </span>
               
-              <span className="text-zinc-500">Payment Ref ID:</span>
-              <span className="text-white text-right font-mono text-[10px]">{confirmedBooking.paymentId}</span>
+              <span className="text-zinc-500">Payment Status:</span>
+              <span className="text-gold-400 font-bold text-right text-[10px]">Pending Offline Settlement</span>
             </div>
           </div>
 
@@ -355,10 +189,6 @@ function CheckoutContent() {
   // CHECKOUT PAGE FORM VIEW
   return (
     <div className="max-w-7xl mx-auto px-4 py-12 text-white pb-24 lg:pb-12">
-      <Script
-        src="https://checkout.razorpay.com/v1/checkout.js"
-        strategy="lazyOnload"
-      />
       <Link href="/booking" className="inline-flex items-center text-xs text-zinc-500 hover:text-gold-400 transition-colors mb-8">
         <ArrowLeft className="w-4 h-4 mr-2" /> Back to Availability
       </Link>
@@ -535,12 +365,12 @@ function CheckoutContent() {
               {loading ? (
                 <>
                   <Loader2 className="w-4 h-4 animate-spin text-black" />
-                  Processing Checkout...
+                  Submitting Request...
                 </>
               ) : (
                 <>
                   <ShieldCheck className="w-4.5 h-4.5" />
-                  Proceed to Secure Payment
+                  Confirm Booking Request
                 </>
               )}
             </button>
@@ -615,200 +445,6 @@ function CheckoutContent() {
         </div>
       </div>
 
-      {/* 5. Simulated Payment Gateway Modal */}
-      {showSimulatedGateway && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4 overflow-y-auto animate-fade-in">
-          <div className="bg-zinc-950 border border-gold-900/50 w-full max-w-md p-6 md:p-8 space-y-6 relative my-8">
-            <div className="flex justify-between items-center border-b border-zinc-900 pb-3">
-              <div className="flex flex-col">
-                <span className="text-[10px] text-gold-400 uppercase tracking-widest font-semibold">Razorpay Simulator</span>
-                <h3 className="font-serif text-lg text-white font-medium">Card/UPI Checkout</h3>
-              </div>
-              <button
-                onClick={() => setShowSimulatedGateway(false)}
-                className="text-zinc-500 hover:text-white text-sm"
-              >
-                ✕
-              </button>
-            </div>
-
-            {/* Interactive 3D Credit Card Visualizer */}
-            <div className="perspective-1000 w-full max-w-sm h-48 mx-auto relative select-none">
-              <div
-                onClick={() => setIsCardFlipped(!isCardFlipped)}
-                style={{
-                  transform: isCardFlipped ? 'rotateY(180deg)' : 'rotateY(0deg)',
-                  transformStyle: 'preserve-3d',
-                  transition: 'transform 0.6s cubic-bezier(0.4, 0, 0.2, 1)',
-                }}
-                className="w-full h-full relative cursor-pointer"
-              >
-                {/* Front Side */}
-                <div
-                  style={{
-                    backfaceVisibility: 'hidden',
-                    WebkitBackfaceVisibility: 'hidden',
-                  }}
-                  className="absolute inset-0 bg-gradient-to-br from-zinc-900 via-zinc-800 to-zinc-950 border border-gold-400/30 rounded-2xl p-6 shadow-2xl flex flex-col justify-between"
-                >
-                  {/* Subtle Background Pattern */}
-                  <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-gold-400/5 via-transparent to-transparent rounded-2xl pointer-events-none" />
-                  
-                  {/* Header / Brand */}
-                  <div className="flex justify-between items-start z-10">
-                    <div className="w-10 h-7 bg-gradient-to-r from-gold-300 via-gold-200 to-gold-400 rounded-md border border-gold-400/20 relative shadow-inner">
-                      <div className="absolute top-1/2 left-0 right-0 h-[1px] bg-black/20" />
-                      <div className="absolute top-0 bottom-0 left-1/3 w-[1px] bg-black/20" />
-                      <div className="absolute top-0 bottom-0 right-1/3 w-[1px] bg-black/20" />
-                    </div>
-                    
-                    <span className="font-serif text-[10px] tracking-[0.25em] text-gold-400 uppercase font-semibold">
-                      {getCardType(simulatedCardNumber)}
-                    </span>
-                  </div>
-
-                  {/* Card Number */}
-                  <div className="font-mono text-base sm:text-lg tracking-[0.18em] text-white text-center z-10 py-2">
-                    {formatCardNumberVisual(simulatedCardNumber)}
-                  </div>
-
-                  {/* Footer / Card Details */}
-                  <div className="flex justify-between items-end z-10">
-                    <div className="flex flex-col max-w-[70%]">
-                      <span className="text-[7px] text-zinc-500 uppercase tracking-widest font-semibold block mb-0.5">Card Holder</span>
-                      <span className="text-[10px] sm:text-xs text-white uppercase tracking-wider font-medium truncate font-mono">
-                        {simulatedCardName || 'RAHUL DESHMUKH'}
-                      </span>
-                    </div>
-                    <div className="flex flex-col items-end">
-                      <span className="text-[7px] text-zinc-500 uppercase tracking-widest font-semibold block mb-0.5">Expires</span>
-                      <span className="text-[10px] sm:text-xs text-white font-mono">
-                        {simulatedCardExpiry || 'MM/YY'}
-                      </span>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Back Side */}
-                <div
-                  style={{
-                    backfaceVisibility: 'hidden',
-                    WebkitBackfaceVisibility: 'hidden',
-                    transform: 'rotateY(180deg)',
-                  }}
-                  className="absolute inset-0 bg-gradient-to-br from-zinc-950 via-zinc-900 to-zinc-950 border border-gold-400/20 rounded-2xl py-6 shadow-2xl flex flex-col justify-between"
-                >
-                  <div className="w-full h-9 bg-zinc-900 mt-2" />
-                  
-                  <div className="px-6 space-y-3">
-                    <div className="flex items-center gap-3">
-                      <div className="flex-1 h-7 bg-zinc-800 rounded-xs flex items-center justify-end px-3">
-                        <span className="text-[9px] text-zinc-600 font-mono tracking-widest">aura-abode</span>
-                      </div>
-                      <div className="w-12 h-7 bg-white text-black font-mono text-xs flex items-center justify-center font-bold italic rounded-xs shadow-inner">
-                        {simulatedCardCvv || '•••'}
-                      </div>
-                    </div>
-                    
-                    <p className="text-[6px] text-zinc-600 leading-normal text-justify uppercase tracking-wider">
-                      This simulated payment visualizer verifies secure booking confirmation for Diti Hospitality and Aura Abode Karjat.
-                    </p>
-                  </div>
-                  
-                  <div className="px-6 flex justify-between items-center text-[7px] text-gold-400/50 uppercase tracking-widest font-mono">
-                    <span>Secure Sandbox Gateway</span>
-                    <span>CVV Hidden</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <form onSubmit={handleSimulatedPaymentSubmit} className="space-y-4">
-              <div className="bg-zinc-900/40 p-4 border border-zinc-900 text-xs flex justify-between items-center text-zinc-400 mb-2">
-                <span>Paying to: <strong className="text-white">Aura Abode Karjat</strong></span>
-                <span className="text-gold-400 font-bold">₹{Math.round(pricing.total).toLocaleString('en-IN')}</span>
-              </div>
-
-              {paymentError && (
-                <div className="text-red-500 text-xs bg-red-900/10 border border-red-900/20 p-3 text-center">
-                  {paymentError}
-                </div>
-              )}
-
-              <div className="space-y-3 text-xs">
-                <div>
-                  <label className="text-[10px] text-zinc-500 uppercase tracking-widest font-semibold block mb-1">Cardholder Name</label>
-                  <input
-                    type="text"
-                    required
-                    placeholder="e.g. RAHUL DESHMUKH"
-                    value={simulatedCardName}
-                    onChange={(e) => setSimulatedCardName(e.target.value.toUpperCase())}
-                    className="w-full bg-zinc-900 border border-zinc-800 text-white px-3 py-2 text-xs focus:outline-none focus:border-gold-400 transition-colors"
-                  />
-                </div>
-
-                <div>
-                  <label className="text-[10px] text-zinc-500 uppercase tracking-widest font-semibold block mb-1">Card Number</label>
-                  <input
-                    type="text"
-                    required
-                    placeholder="4111 2222 3333 4444"
-                    value={simulatedCardNumber}
-                    onChange={handleCardNumberChange}
-                    className="w-full bg-zinc-900 border border-zinc-800 text-white px-3 py-2 text-xs focus:outline-none focus:border-gold-400 transition-colors font-mono"
-                  />
-                </div>
-
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <label className="text-[10px] text-zinc-500 uppercase tracking-widest font-semibold block mb-1">Expiry Date</label>
-                    <input
-                      type="text"
-                      required
-                      placeholder="MM/YY"
-                      maxLength={5}
-                      value={simulatedCardExpiry}
-                      onChange={handleCardExpiryChange}
-                      className="w-full bg-zinc-900 border border-zinc-800 text-white px-3 py-2 text-xs focus:outline-none focus:border-gold-400 transition-colors font-mono"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="text-[10px] text-zinc-500 uppercase tracking-widest font-semibold block mb-1">CVV Code</label>
-                    <input
-                      type="password"
-                      required
-                      maxLength={3}
-                      placeholder="•••"
-                      value={simulatedCardCvv}
-                      onChange={(e) => setSimulatedCardCvv(e.target.value.replace(/\D/g,''))}
-                      onFocus={() => setIsCardFlipped(true)}
-                      onBlur={() => setIsCardFlipped(false)}
-                      className="w-full bg-zinc-900 border border-zinc-800 text-white px-3 py-2 text-xs focus:outline-none focus:border-gold-400 transition-colors font-mono"
-                    />
-                  </div>
-                </div>
-              </div>
-
-              <button
-                type="submit"
-                disabled={loading}
-                className="w-full py-3 bg-gold-400 hover:bg-gold-500 text-black text-xs uppercase tracking-widest font-bold transition-colors shadow-md mt-6 flex justify-center items-center gap-2"
-              >
-                {loading ? (
-                  <>
-                    <Loader2 className="w-4 h-4 animate-spin text-black" />
-                    Verifying Payment...
-                  </>
-                ) : (
-                  `Pay ₹${Math.round(pricing.total).toLocaleString('en-IN')}`
-                )}
-              </button>
-            </form>
-          </div>
-        </div>
-      )}
     </div>
   );
 }
